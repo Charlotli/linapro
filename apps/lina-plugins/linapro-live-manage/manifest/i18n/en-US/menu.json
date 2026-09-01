@@ -1,0 +1,40 @@
+{
+  "menu": {
+    "plugin:linapro-live-manage:room": {
+      "title": "Live Rooms"
+    },
+    "plugin:linapro-live-manage:room:add": {
+      "title": "Create"
+    },
+    "plugin:linapro-live-manage:room:edit": {
+      "title": "Update"
+    },
+    "plugin:linapro-live-manage:room:query": {
+      "title": "Query"
+    },
+    "plugin:linapro-live-manage:room:remove": {
+      "title": "Delete"
+    },
+    "plugin:linapro-live-manage:live": {
+      "title": "Live Content"
+    },
+    "plugin:linapro-live-manage:live:add": {
+      "title": "Create"
+    },
+    "plugin:linapro-live-manage:live:edit": {
+      "title": "Update"
+    },
+    "plugin:linapro-live-manage:live:query": {
+      "title": "Query"
+    },
+    "plugin:linapro-live-manage:live:remove": {
+      "title": "Delete"
+    },
+    "plugin:linapro-live-manage:live:start": {
+      "title": "Start Live"
+    },
+    "plugin:linapro-live-manage:live:stop": {
+      "title": "Stop Live"
+    }
+  }
+}

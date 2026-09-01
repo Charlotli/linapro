@@ -1,0 +1,40 @@
+{
+  "menu": {
+    "plugin:linapro-live-manage:room": {
+      "title": "直播间管理"
+    },
+    "plugin:linapro-live-manage:room:add": {
+      "title": "新增直播间"
+    },
+    "plugin:linapro-live-manage:room:edit": {
+      "title": "编辑直播间"
+    },
+    "plugin:linapro-live-manage:room:query": {
+      "title": "直播间查询"
+    },
+    "plugin:linapro-live-manage:room:remove": {
+      "title": "删除直播间"
+    },
+    "plugin:linapro-live-manage:live": {
+      "title": "直播内容"
+    },
+    "plugin:linapro-live-manage:live:add": {
+      "title": "新增直播内容"
+    },
+    "plugin:linapro-live-manage:live:edit": {
+      "title": "编辑直播内容"
+    },
+    "plugin:linapro-live-manage:live:query": {
+      "title": "直播内容查询"
+    },
+    "plugin:linapro-live-manage:live:remove": {
+      "title": "删除直播内容"
+    },
+    "plugin:linapro-live-manage:live:start": {
+      "title": "开启直播"
+    },
+    "plugin:linapro-live-manage:live:stop": {
+      "title": "关闭直播"
+    }
+  }
+}

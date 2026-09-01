@@ -1,0 +1,58 @@
+{
+  "plugin": {
+    "linapro-equipment-manage": {
+      "name": "Equipment",
+      "description": "Official source plugin for equipment registry and maintenance records",
+      "tableTitle": "Equipment registry",
+      "maintTableTitle": "Maintenance record list",
+      "drawer": {
+        "createTitle": "Register Equipment",
+        "editTitle": "Update Equipment",
+        "maintCreateTitle": "Log Maintenance",
+        "maintEditTitle": "Update Maintenance Record"
+      },
+      "fields": {
+        "code": "Code",
+        "name": "Name",
+        "type": "Type",
+        "brandModel": "Brand/Model",
+        "purchaseDate": "Purchase date",
+        "purchasePrice": "Purchase price",
+        "location": "Location",
+        "owner": "Owner",
+        "status": "Status",
+        "remark": "Remark",
+        "equipment": "Equipment",
+        "maintType": "Type",
+        "maintDate": "Date",
+        "maintainer": "Maintainer",
+        "cost": "Cost",
+        "content": "Content",
+        "result": "Result"
+      },
+      "placeholders": {
+        "code": "Enter the equipment code",
+        "name": "Enter the equipment name",
+        "type": "Select the type",
+        "brandModel": "Enter the brand and model",
+        "purchaseDate": "Select the purchase date",
+        "location": "Enter the location",
+        "owner": "Enter the owner",
+        "equipment": "Select equipment",
+        "maintType": "Select the maintenance type",
+        "maintDate": "Select the maintenance date",
+        "result": "Enter the result"
+      },
+      "validation": {
+        "code": "Enter the equipment code",
+        "name": "Enter the equipment name",
+        "type": "Select the type",
+        "equipment": "Select equipment",
+        "maintType": "Select the maintenance type"
+      },
+      "messages": {
+        "deleteSelectedConfirm": "Delete the selected {count} equipment records?"
+      }
+    }
+  }
+}

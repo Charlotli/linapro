@@ -1,0 +1,88 @@
+{
+  "plugin": {
+    "linapro-live-manage": {
+      "description": "提供直播间与直播内容维护的官方源码插件",
+      "drawer": {
+        "liveCreateTitle": "新增直播内容",
+        "liveEditTitle": "编辑直播内容",
+        "roomCreateTitle": "新增直播间",
+        "roomEditTitle": "编辑直播间"
+      },
+      "fields": {
+        "accompaniment": "伴奏",
+        "content": "直播内容",
+        "coverUrl": "封面图地址",
+        "createdBy": "创建人",
+        "description": "直播间描述",
+        "deviceInfo": "设备信息",
+        "host": "主持人",
+        "isPublic": "公开性",
+        "leadSinger": "领唱",
+        "liveDate": "直播日期",
+        "liveUrl": "播放地址",
+        "outline": "讲道大纲",
+        "pageUrl": "页面链接",
+        "preacher": "讲员",
+        "preacherIdentity": "讲员身份",
+        "pushUrl": "推流地址",
+        "reception": "接待安排",
+        "roomCode": "直播间编码",
+        "roomId": "直播间",
+        "roomName": "直播间名称",
+        "roomType": "直播间类型",
+        "scriptureContent": "经文内容",
+        "scriptureRef": "经文出处",
+        "sermonTitle": "讲道主题",
+        "singer": "演唱者",
+        "songList": "歌单",
+        "songName": "主打诗歌",
+        "startTime": "开播时间",
+        "state": "直播状态",
+        "status": "直播间状态",
+        "title": "直播主题"
+      },
+      "liveTableTitle": "直播内容列表",
+      "actions": {
+        "start": "开启直播",
+        "stop": "关闭直播"
+      },
+      "messages": {
+        "startConfirm": "确认开启该场直播吗？开启后直播间将进入直播中状态。",
+        "startSuccess": "直播已开启",
+        "stopConfirm": "确认关闭该场直播吗？关闭后直播间将恢复空闲状态。",
+        "stopSuccess": "直播已关闭",
+        "addSong": "添加歌曲",
+        "deleteSelectedLiveConfirm": "确认删除选中的 {count} 条直播内容吗？",
+        "deleteSelectedRoomConfirm": "确认删除选中的 {count} 个直播间吗？"
+      },
+      "name": "直播后台管理",
+      "placeholders": {
+        "coverUrl": "请输入封面图地址",
+        "description": "请输入直播间描述",
+        "liveDate": "请选择直播日期",
+        "liveUrl": "请输入播放地址",
+        "pageUrl": "请输入页面链接",
+        "pushUrl": "请输入推流地址",
+        "roomId": "请选择直播间",
+        "roomName": "请输入直播间名称",
+        "roomCode": "请输入直播间编码",
+        "roomType": "请选择直播间类型",
+        "singer": "请输入演唱者",
+        "songName": "请输入歌曲名称",
+        "startTime": "请选择开播时间",
+        "title": "请输入直播主题"
+      },
+      "roomTableTitle": "直播间列表",
+      "validation": {
+        "isPublic": "请选择公开性",
+        "roomId": "请选择直播间",
+        "roomName": "请输入直播间名称",
+        "roomCode": "请输入直播间编码",
+        "roomType": "请选择直播间类型",
+        "state": "请选择直播状态",
+        "status": "请选择直播间状态",
+        "title": "请输入直播主题"
+      }
+    }
+  }
+}

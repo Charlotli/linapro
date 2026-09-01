@@ -1,0 +1,56 @@
+{
+  "error": {
+    "oa": {
+      "approval": {
+        "approve": {
+          "no": {
+            "authority": "仅当前节点审批人可执行该操作"
+          }
+        },
+        "approver": {
+          "invalid": "审批人用户不存在"
+        },
+        "attachments": {
+          "invalid": "附件必须为最多 10 条的 URL 地址 JSON 数组"
+        },
+        "flow": {
+          "delete": {
+            "required": "请选择要删除的流程"
+          },
+          "name": {
+            "exists": "流程名称已存在"
+          },
+          "not": {
+            "found": "审批流程不存在"
+          },
+          "nodes": {
+            "invalid": "审批节点必须包含 1 到 20 个审批人"
+          },
+          "status": {
+            "invalid": "流程状态取值无效"
+          },
+          "type": {
+            "invalid": "流程类型取值无效"
+          },
+          "unavailable": "审批流程不存在、已停用或没有审批节点"
+        },
+        "request": {
+          "not": {
+            "found": "审批单不存在",
+            "pending": "审批单不在审批中状态"
+          }
+        },
+        "withdraw": {
+          "no": {
+            "authority": "仅申请人可撤回审批单"
+          }
+        },
+        "resubmit": {
+          "no": {
+            "authority": "仅申请人可重新提交审批单"
+          }
+        }
+      }
+    }
+  }
+}

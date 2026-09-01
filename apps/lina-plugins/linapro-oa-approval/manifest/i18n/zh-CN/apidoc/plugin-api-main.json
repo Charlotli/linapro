@@ -1,0 +1,723 @@
+{
+  "plugins": {
+    "linapro_oa_approval": {
+      "api": {
+        "flow": {
+          "v1": {
+            "CreateReq": {
+              "fields": {
+                "flowType": {
+                  "dc": "流程类型：1=请款 2=核销 3=报销"
+                },
+                "flowName": {
+                  "dc": "流程名称，同租户内唯一"
+                },
+                "description": {
+                  "dc": "流程描述"
+                },
+                "status": {
+                  "dc": "流程状态：1=启用 0=停用"
+                },
+                "nodes": {
+                  "dc": "有序审批人节点；列表顺序即审批顺序"
+                }
+              },
+              "meta": {
+                "summary": "创建审批流程",
+                "dc": "在当前租户下创建带有序审批人节点的审批流程；流程名称同租户内唯一，节点数量 1 到 20 且序号连续",
+                "tags": "审批流程"
+              },
+              "responses": {
+                "200": {
+                  "content": {
+                    "application_json": {
+                      "fields": {
+                        "data": {
+                          "fields": {
+                            "id": {
+                              "dc": "审批流程ID"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "dc": "在当前租户下创建带有序审批人节点的审批流程；流程名称同租户内唯一，节点数量 1 到 20 且序号连续"
+              }
+            },
+            "CreateRes": {
+              "fields": {
+                "id": {
+                  "dc": "审批流程ID"
+                }
+              }
+            },
+            "CreateNodeItem": {
+              "fields": {
+                "approverId": {
+                  "dc": "审批人用户ID"
+                }
+              }
+            },
+            "DeleteReq": {
+              "fields": {
+                "ids": {
+                  "dc": "审批流程ID，多个用逗号分隔"
+                }
+              },
+              "meta": {
+                "summary": "删除审批流程",
+                "dc": "按 ID 批量软删除审批流程及其节点；已提交的审批单持有冻结快照不受影响",
+                "tags": "审批流程"
+              },
+              "schema": {
+                "dc": "按 ID 批量软删除审批流程及其节点；已提交的审批单持有冻结快照不受影响"
+              }
+            },
+            "GetReq": {
+              "fields": {
+                "id": {
+                  "dc": "审批流程ID"
+                }
+              },
+              "meta": {
+                "summary": "获取审批流程详情",
+                "dc": "根据审批流程ID获取详情，包括有序审批人节点；跨租户流程返回不存在",
+                "tags": "审批流程"
+              },
+              "schema": {
+                "dc": "根据审批流程ID获取详情，包括有序审批人节点；跨租户流程返回不存在"
+              }
+            },
+            "GetRes": {
+              "fields": {
+                "id": {
+                  "dc": "审批流程ID"
+                },
+                "flowType": {
+                  "dc": "流程类型：1=请款 2=核销 3=报销"
+                },
+                "flowName": {
+                  "dc": "流程名称，同租户内唯一"
+                },
+                "description": {
+                  "dc": "流程描述"
+                },
+                "status": {
+                  "dc": "流程状态：1=启用 0=停用"
+                },
+                "nodeCount": {
+                  "dc": "流程审批节点数量"
+                },
+                "createdBy": {
+                  "dc": "创建人用户ID"
+                },
+                "createdByName": {
+                  "dc": "创建人用户名"
+                },
+                "createdAt": {
+                  "dc": "创建时间，Unix 毫秒时间戳"
+                },
+                "updatedAt": {
+                  "dc": "最后更新时间，Unix 毫秒时间戳"
+                },
+                "nodes": {
+                  "dc": "有序审批人节点列表"
+                }
+              },
+              "schema": {
+                "dc": ""
+              }
+            },
+            "FlowItem": {
+              "fields": {
+                "id": {
+                  "dc": "审批流程ID"
+                },
+                "flowType": {
+                  "dc": "流程类型：1=请款 2=核销 3=报销"
+                },
+                "flowName": {
+                  "dc": "流程名称，同租户内唯一"
+                },
+                "description": {
+                  "dc": "流程描述"
+                },
+                "status": {
+                  "dc": "流程状态：1=启用 0=停用"
+                },
+                "nodeCount": {
+                  "dc": "流程审批节点数量"
+                },
+                "createdBy": {
+                  "dc": "创建人用户ID"
+                },
+                "createdByName": {
+                  "dc": "创建人用户名"
+                },
+                "createdAt": {
+                  "dc": "创建时间，Unix 毫秒时间戳"
+                },
+                "updatedAt": {
+                  "dc": "最后更新时间，Unix 毫秒时间戳"
+                }
+              }
+            },
+            "FlowNodeItem": {
+              "fields": {
+                "order": {
+                  "dc": "审批序号，从 1 开始"
+                },
+                "approverId": {
+                  "dc": "审批人用户ID"
+                },
+                "approverName": {
+                  "dc": "审批人显示名"
+                }
+              }
+            },
+            "ListReq": {
+              "fields": {
+                "pageNum": {
+                  "dc": "页码"
+                },
+                "pageSize": {
+                  "dc": "每页数量"
+                },
+                "flowName": {
+                  "dc": "按流程名称筛选（模糊匹配）"
+                },
+                "flowType": {
+                  "dc": "按流程类型筛选：1=请款 2=核销 3=报销"
+                },
+                "status": {
+                  "dc": "按流程状态筛选：1=启用 0=停用；不传表示不筛选"
+                }
+              },
+              "meta": {
+                "summary": "获取审批流程列表",
+                "dc": "分页查询审批流程列表，支持按名称、类型、状态筛选",
+                "tags": "审批流程"
+              },
+              "responses": {
+                "200": {
+                  "content": {
+                    "application_json": {
+                      "fields": {
+                        "data": {
+                          "fields": {
+                            "list": {
+                              "dc": "审批流程列表"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "dc": "分页查询审批流程列表，支持按名称、类型、状态筛选"
+              }
+            },
+            "ListRes": {
+              "fields": {
+                "list": {
+                  "dc": "审批流程列表"
+                },
+                "total": {
+                  "dc": "总条数"
+                }
+              }
+            },
+            "UpdateReq": {
+              "fields": {
+                "id": {
+                  "dc": "审批流程ID"
+                },
+                "flowType": {
+                  "dc": "流程类型：1=请款 2=核销 3=报销"
+                },
+                "flowName": {
+                  "dc": "流程名称，同租户内唯一"
+                },
+                "description": {
+                  "dc": "流程描述"
+                },
+                "status": {
+                  "dc": "流程状态：1=启用 0=停用"
+                },
+                "nodes": {
+                  "dc": "可选有序审批人节点；传入时整体替换节点列表"
+                }
+              },
+              "meta": {
+                "summary": "更新审批流程",
+                "dc": "更新指定审批流程，字段可选更新；传入 nodes 时整体替换节点列表，变更仅影响之后提交的审批单",
+                "tags": "审批流程"
+              },
+              "requestBody": {
+                "content": {
+                  "application_json": {
+                    "fields": {
+                      "flowType": {
+                        "dc": "流程类型：1=请款 2=核销 3=报销"
+                      },
+                      "flowName": {
+                        "dc": "流程名称，同租户内唯一"
+                      },
+                      "description": {
+                        "dc": "流程描述"
+                      },
+                      "status": {
+                        "dc": "流程状态：1=启用 0=停用"
+                      },
+                      "nodes": {
+                        "dc": "可选有序审批人节点；传入时整体替换节点列表"
+                      }
+                    },
+                    "schema": {
+                      "dc": "更新指定审批流程，字段可选更新；传入 nodes 时整体替换节点列表，变更仅影响之后提交的审批单"
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "dc": "更新指定审批流程，字段可选更新；传入 nodes 时整体替换节点列表，变更仅影响之后提交的审批单"
+              }
+            },
+            "UpdateRes": {},
+            "UpdateNodeItem": {
+              "fields": {
+                "approverId": {
+                  "dc": "审批人用户ID"
+                }
+              }
+            },
+            "UserOptionItem": {
+              "fields": {
+                "id": {
+                  "dc": "用户ID"
+                },
+                "name": {
+                  "dc": "用户显示名"
+                }
+              }
+            },
+            "UserOptionsReq": {
+              "fields": {
+                "keyword": {
+                  "dc": "按用户名或昵称筛选（模糊匹配）；为空表示返回全部可见用户"
+                }
+              },
+              "meta": {
+                "summary": "获取审批人候选",
+                "dc": "返回用户最小投影（ID、显示名）用于审批人选择，按关键字筛选；最多返回 200 条，超出部分不翻页",
+                "tags": "审批流程"
+              },
+              "responses": {
+                "200": {
+                  "content": {
+                    "application_json": {
+                      "fields": {
+                        "data": {
+                          "fields": {
+                            "list": {
+                              "dc": "审批人候选列表"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "dc": "返回用户最小投影（ID、显示名）用于审批人选择，按关键字筛选；最多返回 200 条，超出部分不翻页"
+              }
+            },
+            "UserOptionsRes": {
+              "fields": {
+                "list": {
+                  "dc": "审批人候选列表"
+                }
+              }
+            }
+          }
+        },
+        "approval": {
+          "v1": {
+            "AppenderReq": {
+              "fields": {
+                "id": {
+                  "dc": "审批单ID"
+                },
+                "approverId": {
+                  "dc": "插入到当前节点之后的新审批人用户ID"
+                }
+              },
+              "meta": {
+                "summary": "添加审批人",
+                "dc": "在审批中单据的当前节点之后插入一个新审批人节点：后续节点序号顺延，单据停留在当前节点；仅当前节点审批人可加签",
+                "tags": "审批单"
+              },
+              "schema": {
+                "dc": "在审批中单据的当前节点之后插入一个新审批人节点：后续节点序号顺延，单据停留在当前节点；仅当前节点审批人可加签"
+              }
+            },
+            "AppenderRes": {},
+            "ApproveReq": {
+              "fields": {
+                "id": {
+                  "dc": "审批单ID"
+                },
+                "comment": {
+                  "dc": "可选的回复内容，记录在时间线上"
+                }
+              },
+              "meta": {
+                "summary": "通过审批",
+                "dc": "以当前节点审批人身份通过一张审批中单据：推进到下一节点或在末节点完成单据",
+                "tags": "审批单"
+              },
+              "schema": {
+                "dc": "以当前节点审批人身份通过一张审批中单据：推进到下一节点或在末节点完成单据"
+              }
+            },
+            "ApproveRes": {},
+            "CommentReq": {
+              "fields": {
+                "id": {
+                  "dc": "审批单ID"
+                },
+                "comment": {
+                  "dc": "回复内容"
+                }
+              },
+              "meta": {
+                "summary": "回复审批单",
+                "dc": "向审批中单据的时间线追加一条回复，不改变单据状态；仅申请人与快照内审批人可回复",
+                "tags": "审批单"
+              },
+              "schema": {
+                "dc": "向审批中单据的时间线追加一条回复，不改变单据状态；仅申请人与快照内审批人可回复"
+              }
+            },
+            "CommentRes": {},
+            "CreateReq": {
+              "fields": {
+                "flowId": {
+                  "dc": "审批流程ID"
+                },
+                "title": {
+                  "dc": "审批标题"
+                },
+                "amount": {
+                  "dc": "申请金额，保留两位小数"
+                },
+                "content": {
+                  "dc": "申请说明"
+                },
+                "attachments": {
+                  "dc": "附件 URL 地址列表；最多 10 条，仅存地址不上传文件"
+                }
+              },
+              "meta": {
+                "summary": "提交审批",
+                "dc": "在当前租户下提交一张审批单：流程必须存在、启用且含审批节点；提交时冻结节点快照并通知首个审批人",
+                "tags": "审批单"
+              },
+              "responses": {
+                "200": {
+                  "content": {
+                    "application_json": {
+                      "fields": {
+                        "data": {
+                          "fields": {
+                            "id": {
+                              "dc": "审批单ID"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "dc": "在当前租户下提交一张审批单：流程必须存在、启用且含审批节点；提交时冻结节点快照并通知首个审批人"
+              }
+            },
+            "CreateRes": {
+              "fields": {
+                "id": {
+                  "dc": "审批单ID"
+                }
+              }
+            },
+            "GetReq": {
+              "fields": {
+                "id": {
+                  "dc": "审批单ID"
+                }
+              },
+              "meta": {
+                "summary": "获取审批单详情",
+                "dc": "获取审批单详情、冻结节点快照与完整审批时间线；仅申请人与快照内审批人可见，其他调用方返回不存在且不泄露存在性",
+                "tags": "审批单"
+              },
+              "schema": {
+                "dc": "获取审批单详情、冻结节点快照与完整审批时间线；仅申请人与快照内审批人可见，其他调用方返回不存在且不泄露存在性"
+              }
+            },
+            "GetRes": {
+              "fields": {
+                "nodes": {
+                  "dc": "冻结的节点快照"
+                },
+                "records": {
+                  "dc": "按时间排序的审批时间线"
+                }
+              }
+            },
+            "ListItem": {
+              "fields": {}
+            },
+            "ListReq": {
+              "fields": {
+                "pageNum": {
+                  "dc": "页码"
+                },
+                "pageSize": {
+                  "dc": "每页数量"
+                },
+                "scope": {
+                  "dc": "列表视图：mine=我的申请，pending=待我审批"
+                },
+                "title": {
+                  "dc": "按审批标题筛选（模糊匹配）"
+                },
+                "flowType": {
+                  "dc": "按流程类型筛选：1=请款 2=核销 3=报销"
+                },
+                "status": {
+                  "dc": "按单据状态筛选：1=审批中 2=已通过 3=已驳回 4=已撤回；不传表示不筛选"
+                }
+              },
+              "meta": {
+                "summary": "获取审批单列表",
+                "dc": "分页查询参与人可见的审批单列表；scope 切换我的申请与待我审批视图",
+                "tags": "审批单"
+              },
+              "responses": {
+                "200": {
+                  "content": {
+                    "application_json": {
+                      "fields": {
+                        "data": {
+                          "fields": {
+                            "list": {
+                              "dc": "审批单列表"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "dc": "分页查询参与人可见的审批单列表；scope 切换我的申请与待我审批视图"
+              }
+            },
+            "ListRes": {
+              "fields": {
+                "list": {
+                  "dc": "审批单列表"
+                },
+                "total": {
+                  "dc": "总条数"
+                }
+              }
+            },
+            "PendingCountReq": {
+              "meta": {
+                "dc": "返回当前租户内待当前用户审批的审批中单据数量，用于角标展示",
+                "summary": "查询待办审批数量",
+                "tags": "审批单"
+              },
+              "responses": {
+                "200": {
+                  "content": {
+                    "application_json": {
+                      "fields": {
+                        "data": {
+                          "fields": {
+                            "count": {
+                              "dc": "待当前用户审批的单据数量"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "dc": "返回当前租户内待当前用户审批的审批中单据数量，用于角标展示"
+              }
+            },
+            "PendingCountRes": {
+              "fields": {
+                "count": {
+                  "dc": "待当前用户审批的单据数量"
+                }
+              }
+            },
+            "RejectReq": {
+              "fields": {
+                "id": {
+                  "dc": "审批单ID"
+                },
+                "comment": {
+                  "dc": "必填的驳回理由，记录在时间线上"
+                }
+              },
+              "meta": {
+                "summary": "驳回审批",
+                "dc": "以当前节点审批人身份驳回一张审批中单据：单据状态变为已驳回并通知申请人",
+                "tags": "审批单"
+              },
+              "schema": {
+                "dc": "以当前节点审批人身份驳回一张审批中单据：单据状态变为已驳回并通知申请人"
+              }
+            },
+            "RejectRes": {},
+            "RequestItem": {
+              "fields": {
+                "id": {
+                  "dc": "审批单ID"
+                },
+                "flowId": {
+                  "dc": "审批流程ID"
+                },
+                "flowType": {
+                  "dc": "流程类型：1=请款 2=核销 3=报销"
+                },
+                "title": {
+                  "dc": "审批标题"
+                },
+                "amount": {
+                  "dc": "申请金额，保留两位小数"
+                },
+                "content": {
+                  "dc": "申请说明"
+                },
+                "attachments": {
+                  "dc": "附件 URL 地址列表 JSON 字符串数组"
+                },
+                "status": {
+                  "dc": "单据状态：1=审批中 2=已通过 3=已驳回 4=已撤回"
+                },
+                "currentNodeOrder": {
+                  "dc": "审批中时的待审节点序号"
+                },
+                "currentApproverId": {
+                  "dc": "审批中时的待审审批人用户ID"
+                },
+                "currentApproverName": {
+                  "dc": "批量装配的当前审批人显示名"
+                },
+                "applicantId": {
+                  "dc": "申请人用户ID"
+                },
+                "applicantName": {
+                  "dc": "批量装配的申请人显示名"
+                },
+                "createdAt": {
+                  "dc": "创建时间，Unix 毫秒时间戳"
+                },
+                "updatedAt": {
+                  "dc": "最后更新时间，Unix 毫秒时间戳"
+                }
+              }
+            },
+            "RequestNodeItem": {
+              "fields": {
+                "order": {
+                  "dc": "审批序号，从 1 开始"
+                },
+                "approverId": {
+                  "dc": "审批人用户ID"
+                },
+                "approverName": {
+                  "dc": "审批人显示名"
+                }
+              }
+            },
+            "RequestRecordItem": {
+              "fields": {
+                "id": {
+                  "dc": "审批记录ID"
+                },
+                "nodeOrder": {
+                  "dc": "关联节点序号；0 表示单据级动作"
+                },
+                "action": {
+                  "dc": "动作：1=发起 2=通过 3=驳回 4=回复 5=加签 6=撤回"
+                },
+                "actorId": {
+                  "dc": "操作人用户ID"
+                },
+                "actorName": {
+                  "dc": "批量装配的操作人显示名"
+                },
+                "comment": {
+                  "dc": "动作附带的回复内容"
+                },
+                "createdAt": {
+                  "dc": "创建时间，Unix 毫秒时间戳"
+                }
+              }
+            },
+            "ResubmitReq": {
+              "fields": {
+                "id": {
+                  "dc": "审批单ID"
+                }
+              },
+              "meta": {
+                "dc": "以申请人身份重新发起一张已驳回或已撤回的审批单：冻结节点快照保持不变，单据回到首个审批节点并通知首个审批人",
+                "summary": "重新提交审批单",
+                "tags": "审批单"
+              },
+              "schema": {
+                "dc": "以申请人身份重新发起一张已驳回或已撤回的审批单：冻结节点快照保持不变，单据回到首个审批节点并通知首个审批人"
+              }
+            },
+            "ResubmitRes": {},
+            "WithdrawReq": {
+              "fields": {
+                "id": {
+                  "dc": "审批单ID"
+                }
+              },
+              "meta": {
+                "summary": "撤回审批单",
+                "dc": "以申请人身份撤回一张审批中单据：单据状态变为已撤回并通知当前审批人",
+                "tags": "审批单"
+              },
+              "schema": {
+                "dc": "以申请人身份撤回一张审批中单据：单据状态变为已撤回并通知当前审批人"
+              }
+            },
+            "WithdrawRes": {}
+          }
+        }
+      }
+    }
+  }
+}

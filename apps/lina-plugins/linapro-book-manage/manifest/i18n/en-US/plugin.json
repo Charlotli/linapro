@@ -1,0 +1,64 @@
+{
+  "plugin": {
+    "linapro-book-manage": {
+      "name": "Books",
+      "description": "Official source plugin for book registry and borrow management",
+      "tableTitle": "Book registry",
+      "borrowTableTitle": "Borrow record list",
+      "drawer": {
+        "createTitle": "Register Book",
+        "editTitle": "Update Book",
+        "borrowTitle": "Borrow Book"
+      },
+      "actions": {
+        "borrow": "Borrow",
+        "return": "Return"
+      },
+      "fields": {
+        "title": "Title",
+        "author": "Author",
+        "isbn": "ISBN",
+        "category": "Category",
+        "publisher": "Publisher",
+        "publishDate": "Publish date",
+        "totalQuantity": "Total",
+        "available": "Available/Total",
+        "location": "Location",
+        "status": "Status",
+        "coverUrl": "Cover URL",
+        "remark": "Remark",
+        "book": "Book",
+        "borrower": "Borrower",
+        "borrowDate": "Borrow date",
+        "dueDate": "Due date",
+        "returnDate": "Return date",
+        "borrowStatus": "Status"
+      },
+      "placeholders": {
+        "title": "Enter the book title",
+        "author": "Enter the author",
+        "isbn": "Enter the ISBN",
+        "category": "Select the category",
+        "publisher": "Enter the publisher",
+        "publishDate": "Select the publish date",
+        "location": "Enter the shelf location",
+        "coverUrl": "Enter the cover image URL",
+        "book": "Select an available book",
+        "borrower": "Enter the borrower",
+        "dueDate": "Select the due date"
+      },
+      "validation": {
+        "title": "Enter the book title",
+        "category": "Select the category",
+        "totalQuantity": "Enter the total count",
+        "book": "Select a book",
+        "borrower": "Enter the borrower"
+      },
+      "messages": {
+        "borrowSuccess": "Borrowed",
+        "returnSuccess": "Returned",
+        "returnConfirm": "Return this book now?"
+      }
+    }
+  }
+}

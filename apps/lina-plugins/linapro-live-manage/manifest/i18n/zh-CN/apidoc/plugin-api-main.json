@@ -1,0 +1,899 @@
+{
+  "plugins": {
+    "linapro_live_manage": {
+      "api": {
+        "liveroom": {
+          "v1": {
+            "CreateReq": {
+              "fields": {
+                "description": {
+                  "dc": "直播间描述"
+                },
+                "roomCode": {
+                  "dc": "对外使用的直播间编码，同租户内唯一"
+                },
+                "roomName": {
+                  "dc": "直播间名称"
+                },
+                "roomType": {
+                  "dc": "直播间类型：1=正常聚会 2=活动 3=其他"
+                },
+                "status": {
+                  "dc": "直播间状态：0=空闲 1=直播中 2=禁用"
+                }
+              },
+              "meta": {
+                "dc": "在当前租户下创建直播间，编码在同租户内必须唯一",
+                "summary": "创建直播间",
+                "tags": "直播间"
+              },
+              "responses": {
+                "200": {
+                  "content": {
+                    "application_json": {
+                      "fields": {
+                        "data": {
+                          "fields": {
+                            "id": {
+                              "dc": "直播间ID"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "dc": "在当前租户下创建直播间，编码在同租户内必须唯一"
+              }
+            },
+            "CreateRes": {
+              "fields": {
+                "id": {
+                  "dc": "直播间ID"
+                }
+              }
+            },
+            "DeleteReq": {
+              "fields": {
+                "ids": {
+                  "dc": "直播间ID数组，例如 ids[]=1&ids[]=2"
+                }
+              },
+              "meta": {
+                "dc": "按 ID 批量软删除直播间；仍被直播内容引用的直播间将被拒绝删除",
+                "summary": "删除直播间",
+                "tags": "直播间"
+              },
+              "schema": {
+                "dc": "按 ID 批量软删除直播间；仍被直播内容引用的直播间将被拒绝删除"
+              }
+            },
+            "GetReq": {
+              "fields": {
+                "id": {
+                  "dc": "直播间ID"
+                }
+              },
+              "meta": {
+                "dc": "根据直播间ID获取详情，包括创建人信息；跨租户的直播间返回不存在",
+                "summary": "获取直播间详情",
+                "tags": "直播间"
+              },
+              "schema": {
+                "dc": "根据直播间ID获取详情，包括创建人信息；跨租户的直播间返回不存在"
+              }
+            },
+            "GetRes": {
+              "fields": {
+                "createdAt": {
+                  "dc": "创建时间，Unix 毫秒时间戳"
+                },
+                "createdBy": {
+                  "dc": "创建人用户ID"
+                },
+                "createdByName": {
+                  "dc": "创建人用户名"
+                },
+                "description": {
+                  "dc": "直播间描述"
+                },
+                "id": {
+                  "dc": "直播间ID"
+                },
+                "roomCode": {
+                  "dc": "对外使用的直播间编码，同租户内唯一"
+                },
+                "roomName": {
+                  "dc": "直播间名称"
+                },
+                "roomType": {
+                  "dc": "直播间类型：1=正常聚会 2=活动 3=其他"
+                },
+                "status": {
+                  "dc": "直播间状态：0=空闲 1=直播中 2=禁用"
+                },
+                "updatedAt": {
+                  "dc": "最后更新时间，Unix 毫秒时间戳"
+                },
+                "updatedBy": {
+                  "dc": "最后更新者用户ID"
+                }
+              }
+            },
+            "ListItem": {
+              "fields": {
+                "createdAt": {
+                  "dc": "创建时间，Unix 毫秒时间戳"
+                },
+                "createdBy": {
+                  "dc": "创建人用户ID"
+                },
+                "createdByName": {
+                  "dc": "创建人用户名"
+                },
+                "description": {
+                  "dc": "直播间描述"
+                },
+                "id": {
+                  "dc": "直播间ID"
+                },
+                "roomCode": {
+                  "dc": "对外使用的直播间编码，同租户内唯一"
+                },
+                "roomName": {
+                  "dc": "直播间名称"
+                },
+                "roomType": {
+                  "dc": "直播间类型：1=正常聚会 2=活动 3=其他"
+                },
+                "status": {
+                  "dc": "直播间状态：0=空闲 1=直播中 2=禁用"
+                },
+                "updatedAt": {
+                  "dc": "最后更新时间，Unix 毫秒时间戳"
+                },
+                "updatedBy": {
+                  "dc": "最后更新者用户ID"
+                }
+              }
+            },
+            "ListReq": {
+              "fields": {
+                "pageNum": {
+                  "dc": "页码"
+                },
+                "pageSize": {
+                  "dc": "每页数量"
+                },
+                "roomName": {
+                  "dc": "按直播间名称筛选（模糊匹配）"
+                },
+                "roomType": {
+                  "dc": "按直播间类型筛选：1=正常聚会 2=活动 3=其他"
+                },
+                "status": {
+                  "dc": "按直播间状态筛选：0=空闲 1=直播中 2=禁用；不传表示不筛选"
+                }
+              },
+              "meta": {
+                "dc": "分页查询直播间列表，支持按名称、类型、状态筛选",
+                "summary": "获取直播间列表",
+                "tags": "直播间"
+              },
+              "responses": {
+                "200": {
+                  "content": {
+                    "application_json": {
+                      "fields": {
+                        "data": {
+                          "fields": {
+                            "list": {
+                              "dc": "直播间列表"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "dc": "分页查询直播间列表，支持按名称、类型、状态筛选"
+              }
+            },
+            "ListRes": {
+              "fields": {
+                "list": {
+                  "dc": "直播间列表"
+                },
+                "total": {
+                  "dc": "总条数"
+                }
+              }
+            },
+            "OptionItem": {
+              "fields": {
+                "id": {
+                  "dc": "直播间ID"
+                },
+                "roomCode": {
+                  "dc": "直播间编码"
+                },
+                "roomName": {
+                  "dc": "直播间名称"
+                },
+                "status": {
+                  "dc": "直播间状态：0=空闲 1=直播中 2=禁用"
+                }
+              }
+            },
+            "OptionsReq": {
+              "fields": {
+                "includeDisabled": {
+                  "dc": "是否包含已禁用直播间；不传或 false 表示排除禁用直播间"
+                },
+                "keyword": {
+                  "dc": "按直播间名称或编码筛选（模糊匹配）；为空表示返回全部"
+                },
+                "limit": {
+                  "dc": "返回候选的最大数量；不传或非正数默认 100，超过 200 的值按 200 处理"
+                }
+              },
+              "meta": {
+                "dc": "返回直播间最小投影（ID、编码、名称、状态）用于下拉选择，支持关键字筛选；默认最多返回 100 条，可通过 limit 提升上限至 200 条，超出部分不翻页",
+                "summary": "获取直播间下拉候选",
+                "tags": "直播间"
+              },
+              "responses": {
+                "200": {
+                  "content": {
+                    "application_json": {
+                      "fields": {
+                        "data": {
+                          "fields": {
+                            "list": {
+                              "dc": "直播间候选列表"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "dc": "返回直播间最小投影（ID、编码、名称、状态）用于下拉选择，支持关键字筛选；默认最多返回 100 条，可通过 limit 提升上限至 200 条，超出部分不翻页"
+              }
+            },
+            "OptionsRes": {
+              "fields": {
+                "list": {
+                  "dc": "直播间候选列表"
+                }
+              }
+            },
+            "RoomItem": {
+              "fields": {
+                "createdAt": {
+                  "dc": "创建时间，Unix 毫秒时间戳"
+                },
+                "createdBy": {
+                  "dc": "创建人用户ID"
+                },
+                "description": {
+                  "dc": "直播间描述"
+                },
+                "id": {
+                  "dc": "直播间ID"
+                },
+                "roomCode": {
+                  "dc": "对外使用的直播间编码，同租户内唯一"
+                },
+                "roomName": {
+                  "dc": "直播间名称"
+                },
+                "roomType": {
+                  "dc": "直播间类型：1=正常聚会 2=活动 3=其他"
+                },
+                "status": {
+                  "dc": "直播间状态：0=空闲 1=直播中 2=禁用"
+                },
+                "updatedAt": {
+                  "dc": "最后更新时间，Unix 毫秒时间戳"
+                },
+                "updatedBy": {
+                  "dc": "最后更新者用户ID"
+                }
+              }
+            },
+            "UpdateReq": {
+              "fields": {
+                "description": {
+                  "dc": "直播间描述"
+                },
+                "id": {
+                  "dc": "直播间ID"
+                },
+                "roomCode": {
+                  "dc": "对外使用的直播间编码，同租户内唯一"
+                },
+                "roomName": {
+                  "dc": "直播间名称"
+                },
+                "roomType": {
+                  "dc": "直播间类型：1=正常聚会 2=活动 3=其他"
+                },
+                "status": {
+                  "dc": "直播间状态：0=空闲 1=直播中 2=禁用"
+                }
+              },
+              "meta": {
+                "dc": "更新指定直播间信息，所有字段均为可选更新",
+                "summary": "更新直播间",
+                "tags": "直播间"
+              },
+              "requestBody": {
+                "content": {
+                  "application_json": {
+                    "fields": {
+                      "description": {
+                        "dc": "直播间描述"
+                      },
+                      "roomCode": {
+                        "dc": "对外使用的直播间编码，同租户内唯一"
+                      },
+                      "roomName": {
+                        "dc": "直播间名称"
+                      },
+                      "roomType": {
+                        "dc": "直播间类型：1=正常聚会 2=活动 3=其他"
+                      },
+                      "status": {
+                        "dc": "直播间状态：0=空闲 1=直播中 2=禁用"
+                      }
+                    },
+                    "schema": {
+                      "dc": "更新指定直播间信息，所有字段均为可选更新"
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "dc": "更新指定直播间信息，所有字段均为可选更新"
+              }
+            }
+          }
+        },
+        "live": {
+          "v1": {
+            "CreateReq": {
+              "fields": {
+                "accompaniment": {
+                  "dc": "伴奏信息"
+                },
+                "content": {
+                  "dc": "直播描述/详细内容"
+                },
+                "coverUrl": {
+                  "dc": "封面图地址（卡片/预览图）"
+                },
+                "deviceInfo": {
+                  "dc": "设备信息说明，例如摄像机与麦克风"
+                },
+                "host": {
+                  "dc": "主持人姓名或岗位"
+                },
+                "isPublic": {
+                  "dc": "公开性：1=公开 0=私有"
+                },
+                "leadSinger": {
+                  "dc": "领唱/领拜者姓名或团队"
+                },
+                "liveDate": {
+                  "dc": "直播日期，YYYY-MM-DD 格式，仅表示日历日期；不传默认当天"
+                },
+                "liveUrl": {
+                  "dc": "直播播放地址（如 HLS、RTMP）"
+                },
+                "outline": {
+                  "dc": "讲道大纲或流程"
+                },
+                "pageUrl": {
+                  "dc": "直播活动页链接"
+                },
+                "preacher": {
+                  "dc": "证道人/讲员姓名"
+                },
+                "preacherIdentity": {
+                  "dc": "讲员身份/职务描述"
+                },
+                "pushUrl": {
+                  "dc": "推流地址"
+                },
+                "reception": {
+                  "dc": "接待安排或联系人信息"
+                },
+                "roomId": {
+                  "dc": "同租户内关联的直播间ID"
+                },
+                "scriptureContent": {
+                  "dc": "经文具体内容"
+                },
+                "scriptureRef": {
+                  "dc": "经文章节引用，例如约翰福音 3:16"
+                },
+                "sermonTitle": {
+                  "dc": "讲道主题"
+                },
+                "songList": {
+                  "dc": "歌单 JSON 数组文本，元素为 {name, singer, order}；为空表示无歌单"
+                },
+                "songName": {
+                  "dc": "主打诗歌名称"
+                },
+                "startTime": {
+                  "dc": "开播时间，Unix 毫秒时间戳；不传表示未设置"
+                },
+                "state": {
+                  "dc": "直播状态：0=未开始 1=进行中 2=已结束"
+                },
+                "title": {
+                  "dc": "直播主题，展示在列表与卡片上"
+                }
+              },
+              "meta": {
+                "dc": "在当前租户下创建直播内容，关联直播间必须存在且未禁用；歌单必须为合法 JSON 数组文本",
+                "summary": "创建直播内容",
+                "tags": "直播内容"
+              },
+              "responses": {
+                "200": {
+                  "content": {
+                    "application_json": {
+                      "fields": {
+                        "data": {
+                          "fields": {
+                            "id": {
+                              "dc": "直播内容ID"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "dc": "在当前租户下创建直播内容，关联直播间必须存在且未禁用；歌单必须为合法 JSON 数组文本"
+              }
+            },
+            "CreateRes": {
+              "fields": {
+                "id": {
+                  "dc": "直播内容ID"
+                }
+              }
+            },
+            "DeleteReq": {
+              "fields": {
+                "ids": {
+                  "dc": "直播内容ID数组，例如 ids[]=1&ids[]=2"
+                }
+              },
+              "meta": {
+                "dc": "按 ID 批量软删除直播内容",
+                "summary": "删除直播内容",
+                "tags": "直播内容"
+              },
+              "schema": {
+                "dc": "按 ID 批量软删除直播内容"
+              }
+            },
+            "GetReq": {
+              "fields": {
+                "id": {
+                  "dc": "直播内容ID"
+                }
+              },
+              "meta": {
+                "dc": "根据直播内容ID获取详情，包括直播间名称和创建人信息；跨租户的记录返回不存在",
+                "summary": "获取直播内容详情",
+                "tags": "直播内容"
+              },
+              "schema": {
+                "dc": "根据直播内容ID获取详情，包括直播间名称和创建人信息；跨租户的记录返回不存在"
+              }
+            },
+            "GetRes": {
+              "fields": {
+                "createdAt": {
+                  "dc": "创建时间，Unix 毫秒时间戳"
+                },
+                "createdBy": {
+                  "dc": "创建人用户ID"
+                },
+                "createdByName": {
+                  "dc": "创建人用户名"
+                },
+                "roomName": {
+                  "dc": "批量装配的直播间名称"
+                }
+              }
+            },
+            "ListItem": {
+              "fields": {
+                "createdByName": {
+                  "dc": "创建人用户名"
+                },
+                "roomName": {
+                  "dc": "批量装配的直播间名称"
+                }
+              }
+            },
+            "ListReq": {
+              "fields": {
+                "isPublic": {
+                  "dc": "按公开性筛选：1=公开 0=私有；不传表示不筛选"
+                },
+                "liveDateEnd": {
+                  "dc": "直播日期筛选范围结束（YYYY-MM-DD，含边界）；为空表示不限制"
+                },
+                "liveDateStart": {
+                  "dc": "直播日期筛选范围开始（YYYY-MM-DD，含边界）；为空表示不限制"
+                },
+                "pageNum": {
+                  "dc": "页码"
+                },
+                "pageSize": {
+                  "dc": "每页数量"
+                },
+                "roomId": {
+                  "dc": "按直播间ID筛选；0 表示不筛选"
+                },
+                "state": {
+                  "dc": "按直播状态筛选：0=未开始 1=进行中 2=已结束；不传表示不筛选"
+                },
+                "title": {
+                  "dc": "按直播主题筛选（模糊匹配）"
+                }
+              },
+              "meta": {
+                "dc": "分页查询直播内容列表，支持按主题、直播间、状态、公开性筛选",
+                "summary": "获取直播内容列表",
+                "tags": "直播内容"
+              },
+              "responses": {
+                "200": {
+                  "content": {
+                    "application_json": {
+                      "fields": {
+                        "data": {
+                          "fields": {
+                            "list": {
+                              "dc": "直播内容列表"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "dc": "分页查询直播内容列表，支持按主题、直播间、状态、公开性筛选"
+              }
+            },
+            "ListRes": {
+              "fields": {
+                "list": {
+                  "dc": "直播内容列表"
+                },
+                "total": {
+                  "dc": "总条数"
+                }
+              }
+            },
+            "LiveItem": {
+              "fields": {
+                "accompaniment": {
+                  "dc": "伴奏信息"
+                },
+                "content": {
+                  "dc": "直播描述/详细内容"
+                },
+                "coverUrl": {
+                  "dc": "封面图地址（卡片/预览图）"
+                },
+                "createdAt": {
+                  "dc": "创建时间，Unix 毫秒时间戳"
+                },
+                "createdBy": {
+                  "dc": "创建人用户ID"
+                },
+                "deviceInfo": {
+                  "dc": "设备信息说明，例如摄像机与麦克风"
+                },
+                "host": {
+                  "dc": "主持人姓名或岗位"
+                },
+                "id": {
+                  "dc": "直播内容ID"
+                },
+                "isPublic": {
+                  "dc": "公开性：1=公开 0=私有"
+                },
+                "leadSinger": {
+                  "dc": "领唱/领拜者姓名或团队"
+                },
+                "liveDate": {
+                  "dc": "直播日期，YYYY-MM-DD 格式，仅表示日历日期"
+                },
+                "liveUrl": {
+                  "dc": "直播播放地址（如 HLS、RTMP）"
+                },
+                "outline": {
+                  "dc": "讲道大纲或流程"
+                },
+                "pageUrl": {
+                  "dc": "直播活动页链接"
+                },
+                "preacher": {
+                  "dc": "证道人/讲员姓名"
+                },
+                "preacherIdentity": {
+                  "dc": "讲员身份/职务描述"
+                },
+                "pushUrl": {
+                  "dc": "推流地址"
+                },
+                "reception": {
+                  "dc": "接待安排或联系人信息"
+                },
+                "roomId": {
+                  "dc": "同租户内关联的直播间ID"
+                },
+                "roomName": {
+                  "dc": "批量装配的直播间名称"
+                },
+                "scriptureContent": {
+                  "dc": "经文具体内容"
+                },
+                "scriptureRef": {
+                  "dc": "经文章节引用，例如约翰福音 3:16"
+                },
+                "sermonTitle": {
+                  "dc": "讲道主题"
+                },
+                "songList": {
+                  "dc": "歌单 JSON 数组文本，元素为 {name, singer, order}；为空表示无歌单"
+                },
+                "songName": {
+                  "dc": "主打诗歌名称"
+                },
+                "startTime": {
+                  "dc": "开播时间，Unix 毫秒时间戳；为空表示未设置"
+                },
+                "state": {
+                  "dc": "直播状态：0=未开始 1=进行中 2=已结束"
+                },
+                "title": {
+                  "dc": "直播主题，展示在列表与卡片上"
+                },
+                "updatedAt": {
+                  "dc": "最后更新时间，Unix 毫秒时间戳"
+                },
+                "updatedBy": {
+                  "dc": "最后更新者用户ID"
+                }
+              }
+            },
+            "StartReq": {
+              "fields": {
+                "id": {
+                  "dc": "直播内容ID"
+                }
+              },
+              "meta": {
+                "dc": "将当前租户内未开始的直播置为进行中：关联直播间必须存在、未禁用且无其他进行中的直播；同一事务内记录开播时间并将直播间置为直播中",
+                "summary": "开启直播",
+                "tags": "直播内容"
+              },
+              "schema": {
+                "dc": "将当前租户内未开始的直播置为进行中：关联直播间必须存在、未禁用且无其他进行中的直播；同一事务内记录开播时间并将直播间置为直播中"
+              }
+            },
+            "StartRes": {},
+            "StopReq": {
+              "fields": {
+                "id": {
+                  "dc": "直播内容ID"
+                }
+              },
+              "meta": {
+                "dc": "将当前租户内进行中的直播置为已结束：同一事务内将仍在直播中的关联直播间恢复空闲，开播时间保持不变",
+                "summary": "关闭直播",
+                "tags": "直播内容"
+              },
+              "schema": {
+                "dc": "将当前租户内进行中的直播置为已结束：同一事务内将仍在直播中的关联直播间恢复空闲，开播时间保持不变"
+              }
+            },
+            "StopRes": {},
+            "UpdateReq": {
+              "fields": {
+                "accompaniment": {
+                  "dc": "伴奏信息"
+                },
+                "content": {
+                  "dc": "直播描述/详细内容"
+                },
+                "coverUrl": {
+                  "dc": "封面图地址（卡片/预览图）"
+                },
+                "deviceInfo": {
+                  "dc": "设备信息说明，例如摄像机与麦克风"
+                },
+                "host": {
+                  "dc": "主持人姓名或岗位"
+                },
+                "id": {
+                  "dc": "直播内容ID"
+                },
+                "isPublic": {
+                  "dc": "公开性：1=公开 0=私有"
+                },
+                "leadSinger": {
+                  "dc": "领唱/领拜者姓名或团队"
+                },
+                "liveDate": {
+                  "dc": "直播日期，YYYY-MM-DD 格式，仅表示日历日期"
+                },
+                "liveUrl": {
+                  "dc": "直播播放地址（如 HLS、RTMP）"
+                },
+                "outline": {
+                  "dc": "讲道大纲或流程"
+                },
+                "pageUrl": {
+                  "dc": "直播活动页链接"
+                },
+                "preacher": {
+                  "dc": "证道人/讲员姓名"
+                },
+                "preacherIdentity": {
+                  "dc": "讲员身份/职务描述"
+                },
+                "pushUrl": {
+                  "dc": "推流地址"
+                },
+                "reception": {
+                  "dc": "接待安排或联系人信息"
+                },
+                "roomId": {
+                  "dc": "不可变更的直播间绑定；传入不同直播间会被拒绝"
+                },
+                "scriptureContent": {
+                  "dc": "经文具体内容"
+                },
+                "scriptureRef": {
+                  "dc": "经文章节引用，例如约翰福音 3:16"
+                },
+                "sermonTitle": {
+                  "dc": "讲道主题"
+                },
+                "songList": {
+                  "dc": "歌单 JSON 数组文本，元素为 {name, singer, order}；为空表示无歌单"
+                },
+                "songName": {
+                  "dc": "主打诗歌名称"
+                },
+                "startTime": {
+                  "dc": "开播时间，Unix 毫秒时间戳"
+                },
+                "state": {
+                  "dc": "直播状态：0=未开始 1=进行中 2=已结束"
+                },
+                "title": {
+                  "dc": "直播主题，展示在列表与卡片上"
+                }
+              },
+              "meta": {
+                "dc": "更新指定直播内容，所有字段均为可选更新；直播间绑定创建后不可变更，传入不同直播间会被拒绝；歌单必须为合法 JSON 数组文本",
+                "summary": "更新直播内容",
+                "tags": "直播内容"
+              },
+              "requestBody": {
+                "content": {
+                  "application_json": {
+                    "fields": {
+                      "accompaniment": {
+                        "dc": "伴奏信息"
+                      },
+                      "content": {
+                        "dc": "直播描述/详细内容"
+                      },
+                      "coverUrl": {
+                        "dc": "封面图地址（卡片/预览图）"
+                      },
+                      "deviceInfo": {
+                        "dc": "设备信息说明，例如摄像机与麦克风"
+                      },
+                      "host": {
+                        "dc": "主持人姓名或岗位"
+                      },
+                      "isPublic": {
+                        "dc": "公开性：1=公开 0=私有"
+                      },
+                      "leadSinger": {
+                        "dc": "领唱/领拜者姓名或团队"
+                      },
+                      "liveDate": {
+                        "dc": "直播日期，YYYY-MM-DD 格式，仅表示日历日期"
+                      },
+                      "liveUrl": {
+                        "dc": "直播播放地址（如 HLS、RTMP）"
+                      },
+                      "outline": {
+                        "dc": "讲道大纲或流程"
+                      },
+                      "pageUrl": {
+                        "dc": "直播活动页链接"
+                      },
+                      "preacher": {
+                        "dc": "证道人/讲员姓名"
+                      },
+                      "preacherIdentity": {
+                        "dc": "讲员身份/职务描述"
+                      },
+                      "pushUrl": {
+                        "dc": "推流地址"
+                      },
+                      "reception": {
+                        "dc": "接待安排或联系人信息"
+                      },
+                      "roomId": {
+                        "dc": "不可变更的直播间绑定；传入不同直播间会被拒绝"
+                      },
+                      "scriptureContent": {
+                        "dc": "经文具体内容"
+                      },
+                      "scriptureRef": {
+                        "dc": "经文章节引用，例如约翰福音 3:16"
+                      },
+                      "sermonTitle": {
+                        "dc": "讲道主题"
+                      },
+                      "songList": {
+                        "dc": "歌单 JSON 数组文本，元素为 {name, singer, order}；为空表示无歌单"
+                      },
+                      "songName": {
+                        "dc": "主打诗歌名称"
+                      },
+                      "startTime": {
+                        "dc": "开播时间，Unix 毫秒时间戳"
+                      },
+                      "state": {
+                        "dc": "直播状态：0=未开始 1=进行中 2=已结束"
+                      },
+                      "title": {
+                        "dc": "直播主题，展示在列表与卡片上"
+                      }
+                    },
+                    "schema": {
+                      "dc": "更新指定直播内容，所有字段均为可选更新；直播间绑定创建后不可变更，传入不同直播间会被拒绝；歌单必须为合法 JSON 数组文本"
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "dc": "更新指定直播内容，所有字段均为可选更新；直播间绑定创建后不可变更，传入不同直播间会被拒绝；歌单必须为合法 JSON 数组文本"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

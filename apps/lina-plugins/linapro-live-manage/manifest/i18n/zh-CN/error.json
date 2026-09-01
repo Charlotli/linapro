@@ -1,0 +1,52 @@
+{
+  "error": {
+    "live": {
+      "manage": {
+        "live": {
+          "date": {
+            "invalid": "直播日期必须为 YYYY-MM-DD 格式"
+          },
+          "delete": {
+            "required": "请选择要删除的直播内容"
+          },
+          "not": {
+            "found": "直播内容不存在"
+          },
+          "public": {
+            "invalid": "直播公开性取值无效"
+          },
+          "state": {
+            "invalid": "直播状态取值无效",
+            "transition": "当前直播状态不允许执行该操作"
+          }
+        },
+        "room": {
+          "busy": "直播间已有一场进行中的直播",
+          "immutable": "直播间绑定创建后不可变更",
+          "code": {
+            "exists": "直播间编码已存在"
+          },
+          "delete": {
+            "required": "请选择要删除的直播间"
+          },
+          "not": {
+            "found": "直播间不存在"
+          },
+          "referenced": "直播间仍被直播内容引用，无法删除",
+          "status": {
+            "invalid": "直播间状态取值无效"
+          },
+          "type": {
+            "invalid": "直播间类型取值无效"
+          },
+          "unavailable": "直播间不存在或已禁用"
+        },
+        "song": {
+          "list": {
+            "invalid": "歌单必须为合法的 JSON 数组"
+          }
+        }
+      }
+    }
+  }
+}

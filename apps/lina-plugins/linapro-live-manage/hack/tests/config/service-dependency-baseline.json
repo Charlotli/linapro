@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "description": "Plugin-owned service dependency baseline for source-plugin registration boundaries.",
+  "entries": [
+    {
+      "path": "apps/lina-plugins/linapro-live-manage/backend/plugin.go",
+      "maxCalls": 4,
+      "reason": "source-plugin registration boundary; constructs plugin-owned room/live services and controllers from registrar HostServices."
+    }
+  ]
+}

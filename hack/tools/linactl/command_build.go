@@ -16,6 +16,7 @@ import (
 	"gopkg.in/yaml.v3"
 	"linactl/internal/config"
 	"linactl/internal/fileutil"
+	"linactl/internal/frontend"
 	"linactl/internal/plugins"
 	"linactl/internal/toolutil"
 )
@@ -259,8 +260,26 @@ func resolveBuildDir(root string, rawDir string) (string, error) {
 
 func runHostFrontendBuild(ctx context.Context, a *app, env []string, verbose bool) error {
 	fmt.Fprintln(a.stdout, "Building frontend...")
-	if err := a.runCommand(ctx, commandOptions{Dir: filepath.Join(a.root, "apps", "lina-vben"), Env: env, Quiet: !verbose}, "pnpm", "run", "build"); err != nil {
+	// Plugin pages live outside the frontend workspace, so turbo cannot see
+	// them in its cache key. Invoke turbo directly and pass --force when the
+	// plugin frontend stamp changed; --force is a turbo-only flag and must not
+	// leak into package build scripts, so pnpm run cannot be used here.
+	turboArgs := []string{"exec", "turbo", "build"}
+	turboEnv := toolutil.SetEnvValue(env, "NODE_OPTIONS", "--max-old-space-size=8192")
+	stampChanged, stampErr := frontend.PluginFrontendStampChanged(a.root)
+	if stampErr != nil {
+		fmt.Fprintf(a.stdout, "Plugin frontend stamp check skipped: %v\n", stampErr)
+	} else if stampChanged {
+		turboArgs = append(turboArgs, "--force")
+		fmt.Fprintln(a.stdout, "Official plugin frontend sources changed; forcing turbo rebuild")
+	}
+	if err := a.runCommand(ctx, commandOptions{Dir: filepath.Join(a.root, "apps", "lina-vben"), Env: turboEnv, Quiet: !verbose}, "pnpm", turboArgs...); err != nil {
 		return err
+	}
+	if stampErr == nil {
+		if stampErr = frontend.SavePluginFrontendStamp(a.root); stampErr != nil {
+			fmt.Fprintf(a.stdout, "Plugin frontend stamp save failed: %v\n", stampErr)
+		}
 	}
 
 	embedDir := filepath.Join(a.root, "apps", "lina-core", "internal", "packed", "public")

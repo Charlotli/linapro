@@ -1,0 +1,51 @@
+{
+  "error": {
+    "book": {
+      "not": {
+        "found": "书籍不存在"
+      },
+      "isbn": {
+        "exists": "ISBN 已存在"
+      },
+      "category": {
+        "invalid": "书籍分类取值无效"
+      },
+      "status": {
+        "invalid": "书籍状态取值无效"
+      },
+      "quantity": {
+        "invalid": "库存数量无效（不能低于借出数）"
+      },
+      "date": {
+        "invalid": "日期必须为 YYYY-MM-DD 格式"
+      },
+      "referenced": "书籍仍被借阅记录引用，无法删除",
+      "delete": {
+        "required": "请选择要删除的书籍"
+      },
+      "borrow": {
+        "not": {
+          "found": "借阅记录不存在"
+        },
+        "no": {
+          "available": "该书已无可借数量"
+        },
+        "already": {
+          "returned": "该记录已归还"
+        },
+        "return": {
+          "no": {
+            "authority": "仅记录创建人可执行归还"
+          }
+        },
+        "date": {
+          "invalid": "日期必须为 YYYY-MM-DD 格式"
+        },
+        "delete": {
+          "required": "请选择要删除的借阅记录",
+          "borrowed": "借出中的记录不能删除，请先归还"
+        }
+      }
+    }
+  }
+}

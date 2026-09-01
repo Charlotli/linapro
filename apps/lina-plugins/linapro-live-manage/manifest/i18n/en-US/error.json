@@ -1,0 +1,52 @@
+{
+  "error": {
+    "live": {
+      "manage": {
+        "live": {
+          "date": {
+            "invalid": "Live date must be in YYYY-MM-DD format"
+          },
+          "delete": {
+            "required": "Select at least one live content record to delete"
+          },
+          "not": {
+            "found": "Live content does not exist"
+          },
+          "public": {
+            "invalid": "Live visibility is invalid"
+          },
+          "state": {
+            "invalid": "Live state is invalid",
+            "transition": "Live state does not allow this action"
+          }
+        },
+        "room": {
+          "busy": "Live room already has an ongoing live",
+          "immutable": "Live room binding cannot be changed after creation",
+          "code": {
+            "exists": "Live room code already exists"
+          },
+          "delete": {
+            "required": "Select at least one live room to delete"
+          },
+          "not": {
+            "found": "Live room does not exist"
+          },
+          "referenced": "Live room is still referenced by live content",
+          "status": {
+            "invalid": "Live room status is invalid"
+          },
+          "type": {
+            "invalid": "Live room type is invalid"
+          },
+          "unavailable": "Live room does not exist or is disabled"
+        },
+        "song": {
+          "list": {
+            "invalid": "Song list must be a valid JSON array"
+          }
+        }
+      }
+    }
+  }
+}

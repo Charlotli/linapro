@@ -1,0 +1,56 @@
+{
+  "error": {
+    "oa": {
+      "approval": {
+        "approve": {
+          "no": {
+            "authority": "Only the current node approver can perform this action"
+          }
+        },
+        "approver": {
+          "invalid": "Approver user does not exist"
+        },
+        "attachments": {
+          "invalid": "Attachments must be a JSON array of at most 10 URL addresses"
+        },
+        "flow": {
+          "delete": {
+            "required": "Select at least one approval flow to delete"
+          },
+          "name": {
+            "exists": "Approval flow name already exists"
+          },
+          "not": {
+            "found": "Approval flow does not exist"
+          },
+          "nodes": {
+            "invalid": "Approval flow nodes must contain 1 to 20 approvers"
+          },
+          "status": {
+            "invalid": "Approval flow status is invalid"
+          },
+          "type": {
+            "invalid": "Approval flow type is invalid"
+          },
+          "unavailable": "Approval flow does not exist, is disabled, or has no approver nodes"
+        },
+        "request": {
+          "not": {
+            "found": "Approval request does not exist",
+            "pending": "Approval request is not pending"
+          }
+        },
+        "withdraw": {
+          "no": {
+            "authority": "Only the applicant can withdraw the request"
+          }
+        },
+        "resubmit": {
+          "no": {
+            "authority": "Only the applicant can resubmit the request"
+          }
+        }
+      }
+    }
+  }
+}

@@ -208,8 +208,13 @@ export class LoginPage {
 
   async loginAndWaitForRedirect(username: string, password: string) {
     await this.login(username, password);
-    await this.page.waitForURL((url) => !url.pathname.includes("/auth/login"), {
-      timeout: 15000,
-    });
+    // The hosted frontend uses hash routing: the pathname stays on
+    // /auth/login while the workspace hash (#/...) appears after login.
+    await this.page.waitForURL(
+      (url) => url.hash.startsWith("#/") && !url.hash.includes("/auth/login"),
+      {
+        timeout: 15000,
+      },
+    );
   }
 }

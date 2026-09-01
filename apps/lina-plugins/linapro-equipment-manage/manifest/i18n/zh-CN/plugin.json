@@ -1,0 +1,58 @@
+{
+  "plugin": {
+    "linapro-equipment-manage": {
+      "name": "设备管理",
+      "description": "提供设备登记与维护记录管理的官方源码插件",
+      "tableTitle": "设备台账",
+      "maintTableTitle": "维护记录列表",
+      "drawer": {
+        "createTitle": "登记设备",
+        "editTitle": "编辑设备",
+        "maintCreateTitle": "登记维护",
+        "maintEditTitle": "编辑维护记录"
+      },
+      "fields": {
+        "code": "设备编号",
+        "name": "设备名称",
+        "type": "设备类型",
+        "brandModel": "品牌型号",
+        "purchaseDate": "购置日期",
+        "purchasePrice": "购置价格",
+        "location": "存放位置",
+        "owner": "负责人",
+        "status": "状态",
+        "remark": "备注",
+        "equipment": "设备",
+        "maintType": "维护类型",
+        "maintDate": "维护日期",
+        "maintainer": "维护人",
+        "cost": "费用",
+        "content": "维护内容",
+        "result": "维护结果"
+      },
+      "placeholders": {
+        "code": "请输入设备编号",
+        "name": "请输入设备名称",
+        "type": "请选择设备类型",
+        "brandModel": "请输入品牌型号",
+        "purchaseDate": "请选择购置日期",
+        "location": "请输入存放位置",
+        "owner": "请输入负责人",
+        "equipment": "请选择设备",
+        "maintType": "请选择维护类型",
+        "maintDate": "请选择维护日期",
+        "result": "请输入维护结果"
+      },
+      "validation": {
+        "code": "请输入设备编号",
+        "name": "请输入设备名称",
+        "type": "请选择设备类型",
+        "equipment": "请选择设备",
+        "maintType": "请选择维护类型"
+      },
+      "messages": {
+        "deleteSelectedConfirm": "确认删除选中的 {count} 台设备吗？"
+      }
+    }
+  }
+}

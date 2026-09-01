@@ -1,0 +1,34 @@
+{
+  "menu": {
+    "plugin:linapro-oa-approval:flow": {
+      "title": "Approval Flows"
+    },
+    "plugin:linapro-oa-approval:flow:query": {
+      "title": "Query"
+    },
+    "plugin:linapro-oa-approval:flow:add": {
+      "title": "Create"
+    },
+    "plugin:linapro-oa-approval:flow:edit": {
+      "title": "Update"
+    },
+    "plugin:linapro-oa-approval:flow:remove": {
+      "title": "Delete"
+    },
+    "plugin:linapro-oa-approval:request": {
+      "title": "Approval Center"
+    },
+    "plugin:linapro-oa-approval:request:query": {
+      "title": "Query"
+    },
+    "plugin:linapro-oa-approval:request:submit": {
+      "title": "Submit"
+    },
+    "plugin:linapro-oa-approval:request:approve": {
+      "title": "Approve"
+    },
+    "plugin:linapro-oa-approval:request:comment": {
+      "title": "Reply"
+    }
+  }
+}

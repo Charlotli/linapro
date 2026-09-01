@@ -1,0 +1,51 @@
+{
+  "error": {
+    "book": {
+      "not": {
+        "found": "Book does not exist"
+      },
+      "isbn": {
+        "exists": "ISBN already exists"
+      },
+      "category": {
+        "invalid": "Book category is invalid"
+      },
+      "status": {
+        "invalid": "Book status is invalid"
+      },
+      "quantity": {
+        "invalid": "Copy count is invalid (below the lent-out count)"
+      },
+      "date": {
+        "invalid": "Date must be in YYYY-MM-DD format"
+      },
+      "referenced": "Book is still referenced by borrow records",
+      "delete": {
+        "required": "Select at least one book to delete"
+      },
+      "borrow": {
+        "not": {
+          "found": "Borrow record does not exist"
+        },
+        "no": {
+          "available": "Book has no available copies"
+        },
+        "already": {
+          "returned": "Borrow record is already returned"
+        },
+        "return": {
+          "no": {
+            "authority": "Only the record creator can return the book"
+          }
+        },
+        "date": {
+          "invalid": "Date must be in YYYY-MM-DD format"
+        },
+        "delete": {
+          "required": "Select at least one borrow record to delete",
+          "borrowed": "Return the book before deleting the borrow record"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "error": {
+    "equipment": {
+      "not": {
+        "found": "Equipment does not exist"
+      },
+      "code": {
+        "exists": "Equipment code already exists"
+      },
+      "type": {
+        "invalid": "Equipment type is invalid"
+      },
+      "status": {
+        "invalid": "Equipment status is invalid"
+      },
+      "date": {
+        "invalid": "Date must be in YYYY-MM-DD format"
+      },
+      "referenced": "Equipment is still referenced by maintenance records",
+      "delete": {
+        "required": "Select at least one equipment record to delete"
+      },
+      "maintenance": {
+        "not": {
+          "found": "Maintenance record does not exist"
+        },
+        "date": {
+          "invalid": "Maintenance date must be in YYYY-MM-DD format"
+        },
+        "type": {
+          "invalid": "Maintenance type is invalid"
+        },
+        "delete": {
+          "required": "Select at least one maintenance record to delete"
+        }
+      }
+    }
+  }
+}

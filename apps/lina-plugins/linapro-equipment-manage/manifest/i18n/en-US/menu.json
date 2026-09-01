@@ -1,0 +1,34 @@
+{
+  "menu": {
+    "plugin:linapro-equipment-manage:equipment": {
+      "title": "Equipment"
+    },
+    "plugin:linapro-equipment-manage:equipment:query": {
+      "title": "Query"
+    },
+    "plugin:linapro-equipment-manage:equipment:add": {
+      "title": "Create"
+    },
+    "plugin:linapro-equipment-manage:equipment:edit": {
+      "title": "Update"
+    },
+    "plugin:linapro-equipment-manage:equipment:remove": {
+      "title": "Delete"
+    },
+    "plugin:linapro-equipment-manage:maintenance": {
+      "title": "Maintenance Records"
+    },
+    "plugin:linapro-equipment-manage:maintenance:query": {
+      "title": "Query"
+    },
+    "plugin:linapro-equipment-manage:maintenance:add": {
+      "title": "Create"
+    },
+    "plugin:linapro-equipment-manage:maintenance:edit": {
+      "title": "Update"
+    },
+    "plugin:linapro-equipment-manage:maintenance:remove": {
+      "title": "Delete"
+    }
+  }
+}

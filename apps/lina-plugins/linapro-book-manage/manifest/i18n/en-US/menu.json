@@ -1,0 +1,34 @@
+{
+  "menu": {
+    "plugin:linapro-book-manage:book": {
+      "title": "Books"
+    },
+    "plugin:linapro-book-manage:book:query": {
+      "title": "Query"
+    },
+    "plugin:linapro-book-manage:book:add": {
+      "title": "Create"
+    },
+    "plugin:linapro-book-manage:book:edit": {
+      "title": "Update"
+    },
+    "plugin:linapro-book-manage:book:remove": {
+      "title": "Delete"
+    },
+    "plugin:linapro-book-manage:borrow": {
+      "title": "Borrow Records"
+    },
+    "plugin:linapro-book-manage:borrow:query": {
+      "title": "Query"
+    },
+    "plugin:linapro-book-manage:borrow:add": {
+      "title": "Borrow"
+    },
+    "plugin:linapro-book-manage:borrow:edit": {
+      "title": "Update"
+    },
+    "plugin:linapro-book-manage:borrow:remove": {
+      "title": "Delete"
+    }
+  }
+}

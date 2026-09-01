@@ -1,0 +1,64 @@
+{
+  "plugin": {
+    "linapro-book-manage": {
+      "name": "书籍管理",
+      "description": "提供书籍登记与借阅管理的官方源码插件",
+      "tableTitle": "书籍台账",
+      "borrowTableTitle": "借阅记录列表",
+      "drawer": {
+        "createTitle": "登记书籍",
+        "editTitle": "编辑书籍",
+        "borrowTitle": "借出书籍"
+      },
+      "actions": {
+        "borrow": "借出",
+        "return": "归还"
+      },
+      "fields": {
+        "title": "书名",
+        "author": "作者",
+        "isbn": "ISBN",
+        "category": "分类",
+        "publisher": "出版社",
+        "publishDate": "出版日期",
+        "totalQuantity": "总数量",
+        "available": "可借/总数",
+        "location": "存放位置",
+        "status": "状态",
+        "coverUrl": "封面地址",
+        "remark": "备注",
+        "book": "书籍",
+        "borrower": "借阅人",
+        "borrowDate": "借出日期",
+        "dueDate": "应还日期",
+        "returnDate": "归还日期",
+        "borrowStatus": "借阅状态"
+      },
+      "placeholders": {
+        "title": "请输入书名",
+        "author": "请输入作者",
+        "isbn": "请输入 ISBN",
+        "category": "请选择分类",
+        "publisher": "请输入出版社",
+        "publishDate": "请选择出版日期",
+        "location": "请输入存放位置",
+        "coverUrl": "请输入封面图片地址",
+        "book": "请选择可借书籍",
+        "borrower": "请输入借阅人",
+        "dueDate": "请选择应还日期"
+      },
+      "validation": {
+        "title": "请输入书名",
+        "category": "请选择分类",
+        "totalQuantity": "请填写总数量",
+        "book": "请选择书籍",
+        "borrower": "请输入借阅人"
+      },
+      "messages": {
+        "borrowSuccess": "借出成功",
+        "returnSuccess": "归还成功",
+        "returnConfirm": "确认归还该书吗？"
+      }
+    }
+  }
+}

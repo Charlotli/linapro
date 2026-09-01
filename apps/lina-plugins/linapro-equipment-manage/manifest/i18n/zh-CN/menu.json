@@ -1,0 +1,34 @@
+{
+  "menu": {
+    "plugin:linapro-equipment-manage:equipment": {
+      "title": "设备登记"
+    },
+    "plugin:linapro-equipment-manage:equipment:query": {
+      "title": "查询"
+    },
+    "plugin:linapro-equipment-manage:equipment:add": {
+      "title": "新增"
+    },
+    "plugin:linapro-equipment-manage:equipment:edit": {
+      "title": "修改"
+    },
+    "plugin:linapro-equipment-manage:equipment:remove": {
+      "title": "删除"
+    },
+    "plugin:linapro-equipment-manage:maintenance": {
+      "title": "维护记录"
+    },
+    "plugin:linapro-equipment-manage:maintenance:query": {
+      "title": "查询"
+    },
+    "plugin:linapro-equipment-manage:maintenance:add": {
+      "title": "新增"
+    },
+    "plugin:linapro-equipment-manage:maintenance:edit": {
+      "title": "修改"
+    },
+    "plugin:linapro-equipment-manage:maintenance:remove": {
+      "title": "删除"
+    }
+  }
+}

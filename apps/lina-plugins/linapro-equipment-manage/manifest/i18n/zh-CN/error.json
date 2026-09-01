@@ -1,0 +1,39 @@
+{
+  "error": {
+    "equipment": {
+      "not": {
+        "found": "设备不存在"
+      },
+      "code": {
+        "exists": "设备编号已存在"
+      },
+      "type": {
+        "invalid": "设备类型取值无效"
+      },
+      "status": {
+        "invalid": "设备状态取值无效"
+      },
+      "date": {
+        "invalid": "日期必须为 YYYY-MM-DD 格式"
+      },
+      "referenced": "设备仍被维护记录引用，无法删除",
+      "delete": {
+        "required": "请选择要删除的设备"
+      },
+      "maintenance": {
+        "not": {
+          "found": "维护记录不存在"
+        },
+        "date": {
+          "invalid": "维护日期必须为 YYYY-MM-DD 格式"
+        },
+        "type": {
+          "invalid": "维护类型取值无效"
+        },
+        "delete": {
+          "required": "请选择要删除的维护记录"
+        }
+      }
+    }
+  }
+}

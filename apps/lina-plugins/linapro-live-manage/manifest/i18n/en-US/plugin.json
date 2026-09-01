@@ -1,0 +1,88 @@
+{
+  "plugin": {
+    "linapro-live-manage": {
+      "description": "Official source plugin for live-room and live-content management",
+      "drawer": {
+        "liveCreateTitle": "Create Live Content",
+        "liveEditTitle": "Update Live Content",
+        "roomCreateTitle": "Create Live Room",
+        "roomEditTitle": "Update Live Room"
+      },
+      "fields": {
+        "accompaniment": "Accompaniment",
+        "content": "Live content",
+        "coverUrl": "Cover URL",
+        "createdBy": "Creator",
+        "description": "Room description",
+        "deviceInfo": "Device info",
+        "host": "Host",
+        "isPublic": "Visibility",
+        "leadSinger": "Lead singer",
+        "liveDate": "Live date",
+        "liveUrl": "Play URL",
+        "outline": "Sermon outline",
+        "pageUrl": "Page link",
+        "preacher": "Preacher",
+        "preacherIdentity": "Preacher identity",
+        "pushUrl": "Push URL",
+        "reception": "Reception",
+        "roomCode": "Room code",
+        "roomId": "Live room",
+        "roomName": "Room name",
+        "roomType": "Room type",
+        "scriptureContent": "Scripture content",
+        "scriptureRef": "Scripture reference",
+        "sermonTitle": "Sermon title",
+        "singer": "Singer",
+        "songList": "Song list",
+        "songName": "Featured song",
+        "startTime": "Start time",
+        "state": "Live state",
+        "status": "Room status",
+        "title": "Live title"
+      },
+      "liveTableTitle": "Live content list",
+      "actions": {
+        "start": "Start Live",
+        "stop": "Stop Live"
+      },
+      "messages": {
+        "startConfirm": "Start this live now? The live room will become live.",
+        "startSuccess": "Live started",
+        "stopConfirm": "Stop this live now? The live room will return to idle.",
+        "stopSuccess": "Live stopped",
+        "addSong": "Add song",
+        "deleteSelectedLiveConfirm": "Delete the selected {count} live content records?",
+        "deleteSelectedRoomConfirm": "Delete the selected {count} live rooms?"
+      },
+      "name": "Live Management",
+      "placeholders": {
+        "coverUrl": "Enter the cover image URL",
+        "description": "Enter the room description",
+        "liveDate": "Select the live date",
+        "liveUrl": "Enter the play URL",
+        "pageUrl": "Enter the page link",
+        "pushUrl": "Enter the push URL",
+        "roomId": "Select a live room",
+        "roomName": "Enter the room name",
+        "roomCode": "Enter the room code",
+        "roomType": "Select the room type",
+        "singer": "Enter the singer",
+        "songName": "Enter the song name",
+        "startTime": "Select the start time",
+        "title": "Enter the live title"
+      },
+      "roomTableTitle": "Live room list",
+      "validation": {
+        "isPublic": "Select the visibility",
+        "roomId": "Select a live room",
+        "roomName": "Enter the room name",
+        "roomCode": "Enter the room code",
+        "roomType": "Select the room type",
+        "state": "Select the live state",
+        "status": "Select the room status",
+        "title": "Enter the live title"
+      }
+    }
+  }
+}
