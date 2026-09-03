@@ -20,6 +20,15 @@
             "transition": "Live state does not allow this action"
           }
         },
+        "play": {
+          "not": {
+            "found": "No live is available to watch for this room right now"
+          },
+          "tenant": {
+            "invalid": "The live link is invalid or expired",
+            "required": "Open the player page through the live room share link"
+          }
+        },
         "room": {
           "busy": "Live room already has an ongoing live",
           "immutable": "Live room binding cannot be changed after creation",

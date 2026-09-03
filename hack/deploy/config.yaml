@@ -89,6 +89,8 @@ plugin:
       withMockData: true
     - id: "linapro-monitor-server"
       withMockData: true
-    # linapro-ops-demo-guard protects risky actions in public demo environments.
-    - id: "linapro-ops-demo-guard"
-      withMockData: false
+    # linapro-live-manage serves the anonymous viewer H5 play page demo.
+    - id: "linapro-live-manage"
+      withMockData: true
+    # NOTE: linapro-ops-demo-guard exists only in the prebuilt nightly demo
+    # image; keep it out of this list when running a source-built image.

@@ -74,7 +74,15 @@ func DownloadFile(ctx context.Context, url string, dst string) error {
 
 // ExecutableName returns the platform-specific executable filename.
 func ExecutableName(name string) string {
-	if runtime.GOOS == "windows" && filepath.Ext(name) == "" {
+	return ExecutableNameForOS(name, runtime.GOOS)
+}
+
+// ExecutableNameForOS returns the executable filename for the given target OS.
+// It appends the ".exe" suffix only for Windows targets so cross-compilation
+// outputs keep the platform-correct filename (for example a linux binary must
+// stay "lina" even when the build runs on Windows).
+func ExecutableNameForOS(name, goos string) string {
+	if goos == "windows" && filepath.Ext(name) == "" {
 		return name + ".exe"
 	}
 	return name

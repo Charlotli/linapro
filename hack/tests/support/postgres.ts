@@ -6,6 +6,12 @@ const defaultPsqlBin = existsSync(postgresAppPsql) ? postgresAppPsql : 'psql';
 
 export const psqlBin = process.env.E2E_PSQL_BIN ?? defaultPsqlBin;
 
+// Docker mode routes psql through `docker exec` so hosts without a local psql
+// client (notably Windows) can still run the E2E baseline helpers against a
+// running container, e.g. E2E_PSQL_DOCKER=linapro-demo-postgres. The client
+// always targets the postgres server inside that same container.
+const dockerPsqlContainer = process.env.E2E_PSQL_DOCKER?.trim() ?? '';
+
 type PostgresConnection = {
   database: string;
   host: string;
@@ -57,6 +63,19 @@ function assertSafePostgresTarget() {
 }
 
 function psqlEnv() {
+  if (dockerPsqlContainer) {
+    // Inside the container the server is always reachable as the container's
+    // own postgres service; only the database name is taken from env config.
+    return {
+      ...process.env,
+      PGDATABASE: pgConnection.database,
+      PGHOST: '127.0.0.1',
+      PGPASSWORD: pgConnection.password,
+      PGPORT: '5432',
+      PGSSLMODE: pgConnection.sslmode,
+      PGUSER: pgConnection.user,
+    };
+  }
   return {
     ...process.env,
     PGDATABASE: pgConnection.database,
@@ -72,9 +91,27 @@ function psqlArgs(extraArgs: string[]) {
   return ['-X', '-v', 'ON_ERROR_STOP=1', ...extraArgs];
 }
 
+function runPsql(args: string[], options: Parameters<typeof execFileSync>[2] = {}) {
+  if (dockerPsqlContainer) {
+    return execFileSync(
+      'docker',
+      ['exec', '-i', ...(Object.entries(psqlEnv())
+        .filter(([key]) => key.startsWith('PG'))
+        .map(([key, value]) => ['-e', `${key}=${String(value)}`]))
+        .flat(),
+      dockerPsqlContainer,
+      'psql',
+      ...args,
+    ],
+    options,
+  );
+  }
+  return execFileSync(psqlBin, args, options);
+}
+
 export function execPgSQL(sql: string) {
   assertSafePostgresTarget();
-  execFileSync(psqlBin, psqlArgs(['-q', '-c', sql]), {
+  runPsql(psqlArgs(['-q', '-c', sql]), {
     env: psqlEnv(),
     stdio: ['ignore', 'ignore', 'inherit'],
   });
@@ -86,7 +123,7 @@ export function execPgSQLStatements(statements: string[]) {
 
 export function execPgSQLFile(filePath: string) {
   assertSafePostgresTarget();
-  execFileSync(psqlBin, psqlArgs(['-q']), {
+  runPsql(psqlArgs(['-q']), {
     env: psqlEnv(),
     input: readFileSync(filePath, 'utf8'),
     stdio: ['pipe', 'ignore', 'inherit'],
@@ -94,14 +131,13 @@ export function execPgSQLFile(filePath: string) {
 }
 
 export function queryPgRows(sql: string): string[] {
-  const output = execFileSync(
-    psqlBin,
+  const output = runPsql(
     psqlArgs(['-A', '-t', '-q', '-c', sql]),
     {
       encoding: 'utf8',
       env: psqlEnv(),
     },
-  );
+  ) as unknown as string;
   return output
     .split(/\r?\n/u)
     .map((line) => line.trim())

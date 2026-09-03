@@ -1,5 +1,6 @@
 import type { Page } from "@host-tests/support/playwright";
 
+import { workspacePath } from "@host-tests/fixtures/config";
 import {
   waitForConfirmOverlay,
   waitForDialogReady,
@@ -28,12 +29,14 @@ export class LiveContentPage {
   }
 
   async goto() {
-    await this.page.goto("/live/content");
+    // The hosted admin SPA uses hash routing: the workspace path stays
+    // constant and the SPA route lives in the URL fragment.
+    await this.page.goto(`${workspacePath("/live/content")}#/live/content`);
     await waitForTableReady(this.page);
   }
 
-  /** Create live content bound to the first available live room. */
-  async createLive(title: string, roomName: string) {
+  /** Create live content bound to one live room, optionally with a play URL. */
+  async createLive(title: string, roomName: string, liveUrl?: string) {
     await this.page
       .getByRole("button", { name: /新\s*增/ })
       .first()
@@ -41,10 +44,9 @@ export class LiveContentPage {
 
     await waitForDialogReady(this.modal);
 
-    // Select the live room from the room select control.
-    const roomSelect = this.modal
-      .getByPlaceholder("请选择直播间")
-      .first();
+    // Select the live room from the room select control (an antd Select
+    // labelled 直播间 without a placeholder).
+    const roomSelect = this.modal.locator(".ant-select").first();
     await roomSelect.click();
     await this.page
       .locator(".ant-select-dropdown:visible .ant-select-item-option", {
@@ -54,6 +56,12 @@ export class LiveContentPage {
       .click();
 
     await this.modal.getByPlaceholder("请输入直播主题").first().fill(title);
+    if (liveUrl) {
+      await this.modal
+        .getByPlaceholder("请输入播放地址")
+        .first()
+        .fill(liveUrl);
+    }
 
     await this.modal.getByRole("button", { name: /确\s*认/ }).click();
 
@@ -63,16 +71,32 @@ export class LiveContentPage {
       .catch(() => {});
   }
 
+  /**
+   * Locate all visible table rows sharing one vxe rowid. vxe-table renders
+   * the action column in a separate fixed-right table whose rows repeat the
+   * source row's `rowid`, so action lookups must go through that id.
+   */
+  private rowById(rowId: string) {
+    return this.page.locator(`tr.vxe-body--row[rowid="${rowId}"]`);
+  }
+
+  private async findRowIdByText(text: string) {
+    const row = this.page.locator(".vxe-body--row:visible", { hasText: text });
+    await row.first().waitFor({ state: "visible", timeout: 10000 });
+    const rowId = await row.first().getAttribute("rowid");
+    if (!rowId) {
+      throw new Error(`row for ${text} has no vxe rowid`);
+    }
+    return rowId;
+  }
+
   /** Edit live content: search by title, update the title. */
   async editLive(searchTitle: string, newTitle: string) {
     await this.fillSearchField("直播主题", searchTitle);
     await this.clickSearch();
 
-    const row = this.page.locator(".vxe-body--row:visible", {
-      hasText: searchTitle,
-    });
-    await row.first().waitFor({ state: "visible", timeout: 10000 });
-    await row
+    const rowId = await this.findRowIdByText(searchTitle);
+    await this.rowById(rowId)
       .locator("button:visible")
       .filter({ hasText: /编\s*辑/ })
       .first()
@@ -97,9 +121,8 @@ export class LiveContentPage {
     await this.fillSearchField("直播主题", title);
     await this.clickSearch();
 
-    const row = this.page.locator(".vxe-body--row:visible", { hasText: title });
-    await row.first().waitFor({ state: "visible", timeout: 10000 });
-    await row
+    const rowId = await this.findRowIdByText(title);
+    await this.rowById(rowId)
       .locator("button:visible")
       .filter({ hasText: /删\s*除/ })
       .first()
@@ -121,9 +144,8 @@ export class LiveContentPage {
     await this.fillSearchField("直播主题", title);
     await this.clickSearch();
 
-    const row = this.page.locator(".vxe-body--row:visible", { hasText: title });
-    await row.first().waitFor({ state: "visible", timeout: 10000 });
-    await row
+    const rowId = await this.findRowIdByText(title);
+    await this.rowById(rowId)
       .locator("button:visible")
       .filter({ hasText: /开\s*启直播|Start Live/i })
       .first()
@@ -145,9 +167,8 @@ export class LiveContentPage {
     await this.fillSearchField("直播主题", title);
     await this.clickSearch();
 
-    const row = this.page.locator(".vxe-body--row:visible", { hasText: title });
-    await row.first().waitFor({ state: "visible", timeout: 10000 });
-    await row
+    const rowId = await this.findRowIdByText(title);
+    await this.rowById(rowId)
       .locator("button:visible")
       .filter({ hasText: /关\s*闭直播|Stop Live/i })
       .first()

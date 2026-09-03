@@ -301,10 +301,11 @@ func (s *serviceImpl) Delete(ctx context.Context, ids []int64) error {
 
 // firstReferencedRoom returns the first room ID in the list that is still
 // referenced by live content rows in the current tenant, or 0 when none. One
-// bounded query covers the whole batch.
+// bounded query covers the whole batch. The projection scans into a slice so
+// an empty result (no referencing live content) stays a nil error.
 func (s *serviceImpl) firstReferencedRoom(ctx context.Context, roomIDs []int64) (int64, error) {
 	liveColumns := dao.Live.Columns()
-	var referenced struct {
+	var referenced []struct {
 		RoomId int64 `json:"roomId"`
 	}
 	err := tenantspi.ApplyPluginTableFilter(ctx, s.pluginTableFilter(), dao.Live.Ctx(ctx), "").
@@ -315,7 +316,10 @@ func (s *serviceImpl) firstReferencedRoom(ctx context.Context, roomIDs []int64) 
 	if err != nil {
 		return 0, err
 	}
-	return referenced.RoomId, nil
+	if len(referenced) == 0 {
+		return 0, nil
+	}
+	return referenced[0].RoomId, nil
 }
 
 // normalizePositiveInt64IDs drops non-positive identifiers from a batch ID list.

@@ -1,5 +1,6 @@
 import type { Page } from "@host-tests/support/playwright";
 
+import { workspacePath } from "@host-tests/fixtures/config";
 import {
   waitForConfirmOverlay,
   waitForDialogReady,
@@ -30,7 +31,9 @@ export class LiveRoomPage {
   }
 
   async goto() {
-    await this.page.goto("/live/room");
+    // The hosted admin SPA uses hash routing: the workspace path stays
+    // constant and the SPA route lives in the URL fragment.
+    await this.page.goto(`${workspacePath("/live/room")}#/live/room`);
     await waitForTableReady(this.page);
   }
 
@@ -70,16 +73,32 @@ export class LiveRoomPage {
       .catch(() => {});
   }
 
+  /**
+   * Locate all visible table rows sharing one vxe rowid. vxe-table renders
+   * the action column in a separate fixed-right table whose rows repeat the
+   * source row's `rowid`, so action lookups must go through that id.
+   */
+  private rowById(rowId: string) {
+    return this.page.locator(`tr.vxe-body--row[rowid="${rowId}"]`);
+  }
+
+  private async findRowIdByText(text: string) {
+    const row = this.page.locator(".vxe-body--row:visible", { hasText: text });
+    await row.first().waitFor({ state: "visible", timeout: 10000 });
+    const rowId = await row.first().getAttribute("rowid");
+    if (!rowId) {
+      throw new Error(`row for ${text} has no vxe rowid`);
+    }
+    return rowId;
+  }
+
   /** Edit a live room: search by name, update the name. */
   async editRoom(searchName: string, newName: string) {
     await this.fillSearchField("直播间名称", searchName);
     await this.clickSearch();
 
-    const row = this.page.locator(".vxe-body--row:visible", {
-      hasText: searchName,
-    });
-    await row.first().waitFor({ state: "visible", timeout: 10000 });
-    await row
+    const rowId = await this.findRowIdByText(searchName);
+    await this.rowById(rowId)
       .locator("button:visible")
       .filter({ hasText: /编\s*辑/ })
       .first()
@@ -106,11 +125,8 @@ export class LiveRoomPage {
     await this.fillSearchField("直播间名称", roomName);
     await this.clickSearch();
 
-    const row = this.page.locator(".vxe-body--row:visible", {
-      hasText: roomName,
-    });
-    await row.first().waitFor({ state: "visible", timeout: 10000 });
-    await row
+    const rowId = await this.findRowIdByText(roomName);
+    await this.rowById(rowId)
       .locator("button:visible")
       .filter({ hasText: /删\s*除/ })
       .first()

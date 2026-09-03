@@ -10,6 +10,7 @@
 | Live content management | Maintain live events, including titles, push/play/cover/page URLs, song lists, sermon info, scripture, and states. |
 | Room availability governance | Live content must reference a live room that exists and is not disabled; referenced rooms cannot be deleted. |
 | Bounded room options | Live content forms consume a bounded room candidate API with minimal projection. |
+| Viewer H5 play page | Anonymous mobile page that plays the public HLS stream of one room, with replay and preview states. |
 
 ## Routes
 
@@ -19,6 +20,19 @@
 | Live content | `/live/content` | `live:live:list` |
 
 Button permissions: `live:room:query`, `live:room:add`, `live:room:edit`, `live:room:remove`, `live:live:query`, `live:live:add`, `live:live:edit`, `live:live:remove`.
+
+## Viewer H5 Play Page
+
+The plugin serves an anonymous, version-stable viewer page from its own public routes:
+
+| URL | Purpose |
+| --- | --- |
+| `GET /x/linapro-live-manage/h5?room={roomCode}&tenant={tenantId}` | Mobile H5 player page; `tenant` is required only when the tenant plugin is enabled. |
+| `GET /x/linapro-live-manage/api/v1/play?roomCode={roomCode}&tenantId={tenantId}` | Public play-info API behind the same tenant rules. |
+
+- Selection priority: ongoing public live first, latest finished public live as replay, latest not-started public live as preview (no play URL).
+- Private lives, other tenants, and missing rooms all answer with the same not-found error; the push URL and other administrative fields are never exposed.
+- Playback uses the embedded `hls.js` (no external CDN) with native HLS fallback on iOS Safari; the page polls every 30 seconds while the live has not started or nothing is available.
 
 ## Data Tables
 

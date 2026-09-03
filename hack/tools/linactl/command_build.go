@@ -302,9 +302,9 @@ func runHostFrontendBuild(ctx context.Context, a *app, env []string, verbose boo
 func runHostBackendBuild(ctx context.Context, a *app, env []string, options buildOptions) error {
 	multiPlatform := len(options.Targets) > 1
 	for _, target := range options.Targets {
-		targetBinary := filepath.Join(options.OutputDir, toolutil.ExecutableName(options.BinaryName))
+		targetBinary := filepath.Join(options.OutputDir, toolutil.ExecutableNameForOS(options.BinaryName, target.OS))
 		if multiPlatform {
-			targetBinary = filepath.Join(options.OutputDir, target.OS+"_"+target.Arch, toolutil.ExecutableName(options.BinaryName))
+			targetBinary = filepath.Join(options.OutputDir, target.OS+"_"+target.Arch, toolutil.ExecutableNameForOS(options.BinaryName, target.OS))
 		}
 		if err := os.MkdirAll(filepath.Dir(targetBinary), 0o755); err != nil {
 			return fmt.Errorf("create backend output directory: %w", err)

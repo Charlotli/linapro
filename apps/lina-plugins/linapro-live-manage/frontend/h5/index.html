@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0b0e17" />
+  <title>直播观看</title>
+  <!-- The /x/<plugin-id> namespace is a host-enforced stable convention, so
+       absolute asset paths stay correct for both /h5 and /h5/ entry forms. -->
+  <link rel="stylesheet" href="/x/linapro-live-manage/h5/app.css" />
+</head>
+<body>
+  <main id="app" class="app">
+    <!-- 加载骨架 -->
+    <section id="loading-section" class="loading-section">
+      <div class="skeleton skeleton-player"></div>
+      <div class="info-panel">
+        <div class="skeleton skeleton-chip"></div>
+        <div class="skeleton skeleton-title"></div>
+        <div class="skeleton skeleton-line"></div>
+      </div>
+    </section>
+
+    <!-- 播放器区域 -->
+    <section id="player-section" class="player-section hidden">
+      <div class="player-frame">
+        <video id="video" class="player-video" playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5" controls preload="metadata"></video>
+        <div id="live-badge" class="live-badge hidden"><i class="dot"></i>直播中</div>
+        <div id="replay-badge" class="replay-badge hidden">回放</div>
+        <button id="unmute-hint" class="unmute-hint hidden" type="button" aria-label="开启声音">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6.5 8.5H3.5v7h3L11 19z"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5"/></svg>
+          点击开启声音
+        </button>
+        <div id="player-error" class="player-error hidden" aria-live="polite">
+          <span id="player-error-text"></span>
+          <button id="player-retry" type="button">重试</button>
+        </div>
+      </div>
+      <div class="stage-glow" aria-hidden="true"></div>
+    </section>
+
+    <!-- 封面预告区域（未开始 / 无直播） -->
+    <section id="cover-section" class="cover-section hidden">
+      <div class="cover-frame">
+        <img id="cover-image" class="cover-image" alt="" />
+        <div id="cover-fallback" class="cover-fallback">
+          <div class="cover-halo" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="cover-word">聚会直播</span>
+          <span class="cover-sub">L I V E&nbsp;&nbsp;S T R E A M</span>
+          <span id="cover-date" class="cover-date hidden"></span>
+        </div>
+      </div>
+      <div class="stage-glow" aria-hidden="true"></div>
+    </section>
+
+    <!-- 信息区域：上浮玻璃面板 -->
+    <section id="info-section" class="info-section hidden">
+      <div class="info-panel">
+        <div id="state-chip" class="state-chip"></div>
+        <div id="live-room" class="live-room hidden"></div>
+        <h1 id="live-title" class="live-title"></h1>
+        <div id="live-meta" class="live-meta"></div>
+        <div id="program" class="program"></div>
+      </div>
+    </section>
+
+    <!-- 状态提示区域（暂无直播 / 错误） -->
+    <section id="notice-section" class="notice-section hidden">
+      <div class="info-panel notice-panel">
+        <div id="notice-icon" class="notice-icon"></div>
+        <div id="notice-text" class="notice-text">暂无直播</div>
+        <button id="retry-button" class="retry-button" type="button">重新加载</button>
+      </div>
+    </section>
+
+    <footer class="page-footer"><span class="footer-brand">聚会直播</span>直播开始后页面自动进入播放</footer>
+  </main>
+
+  <script src="/x/linapro-live-manage/h5/hls.light.min.js"></script>
+  <script src="/x/linapro-live-manage/h5/app.js"></script>
+</body>
+</html>

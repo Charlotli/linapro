@@ -18,6 +18,7 @@ import (
 
 	livev1 "lina-plugin-linapro-live-manage/backend/api/live/v1"
 	liveroomv1 "lina-plugin-linapro-live-manage/backend/api/liveroom/v1"
+	playv1 "lina-plugin-linapro-live-manage/backend/api/play/v1"
 )
 
 // TestLiveManageAPIsDoNotDependOnGeneratedEntities ensures public API contracts do not import database entities.
@@ -48,6 +49,13 @@ func TestLiveManageResponseDTOsHideInternalFields(t *testing.T) {
 	internalFields := internalResponseFields()
 	assertJSONFieldsAbsent(t, "liveroom.RoomItem", reflect.TypeOf(liveroomv1.RoomItem{}), internalFields)
 	assertJSONFieldsAbsent(t, "live.LiveItem", reflect.TypeOf(livev1.LiveItem{}), internalFields)
+}
+
+// TestPlayResponseDTOsHideAdministrativeFields verifies the anonymous viewer
+// projection never exposes push/page/administrative or audit fields.
+func TestPlayResponseDTOsHideAdministrativeFields(t *testing.T) {
+	viewerForbidden := []string{"pushUrl", "pageUrl", "deviceInfo", "reception", "isPublic", "createdBy", "updatedBy", "deletedAt"}
+	assertJSONFieldsAbsent(t, "play.PlayItem", reflect.TypeOf(playv1.PlayItem{}), viewerForbidden)
 }
 
 // TestLiveManageAPIDocI18NDoesNotReferenceRemovedDTOFields keeps apidoc translations aligned with DTOs.
