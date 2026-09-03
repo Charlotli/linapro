@@ -46,17 +46,21 @@ function addError(message) {
 }
 
 function validateFrontendI18nKeys() {
+  // Windows resolves pnpm through a .cmd shim that spawnSync can only execute
+  // with a shell; POSIX keeps the direct invocation without a shell wrapper.
   const result = spawnSync('pnpm', ['-F', '@lina/web-antd', 'i18n:check'], {
     cwd: path.resolve(testsDir, '../../apps/lina-vben'),
     encoding: 'utf8',
+    shell: process.platform === 'win32',
   });
 
-  if (result.status !== 0) {
+  if (result.status !== 0 || result.error) {
     addError(
       [
         'Frontend i18n key validation failed.',
-        result.stdout.trim(),
-        result.stderr.trim(),
+        result.error?.message ?? '',
+        result.stdout?.trim() ?? '',
+        result.stderr?.trim() ?? '',
       ]
         .filter(Boolean)
         .join('\n'),

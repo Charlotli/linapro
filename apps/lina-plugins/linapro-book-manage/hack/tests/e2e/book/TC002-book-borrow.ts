@@ -2,7 +2,7 @@ import { expect, test } from "@host-tests/fixtures/auth";
 import { prepareSourcePluginsBaseline } from "@host-tests/fixtures/plugin";
 import { BookPage } from "../../pages/BookPage";
 
-test.describe("TC001 书籍登记与借阅", () => {
+test.describe("TC002 书籍登记与借阅", () => {
   test.beforeAll(async () => {
     await prepareSourcePluginsBaseline(["linapro-book-manage"]);
   });
