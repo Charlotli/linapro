@@ -19,6 +19,7 @@ import (
 	livev1 "lina-plugin-linapro-live-manage/backend/api/live/v1"
 	liveroomv1 "lina-plugin-linapro-live-manage/backend/api/liveroom/v1"
 	playv1 "lina-plugin-linapro-live-manage/backend/api/play/v1"
+	subscribev1 "lina-plugin-linapro-live-manage/backend/api/subscribe/v1"
 )
 
 // TestLiveManageAPIsDoNotDependOnGeneratedEntities ensures public API contracts do not import database entities.
@@ -56,6 +57,17 @@ func TestLiveManageResponseDTOsHideInternalFields(t *testing.T) {
 func TestPlayResponseDTOsHideAdministrativeFields(t *testing.T) {
 	viewerForbidden := []string{"pushUrl", "pageUrl", "deviceInfo", "reception", "isPublic", "createdBy", "updatedBy", "deletedAt"}
 	assertJSONFieldsAbsent(t, "play.PlayItem", reflect.TypeOf(playv1.PlayItem{}), viewerForbidden)
+}
+
+// TestSubscribeResponseDTOStaysRawCalendar verifies the calendar subscription
+// response contract stays a raw text/calendar stream: the response DTO
+// carries no JSON body fields beyond the embedded metadata so calendar
+// clients keep receiving an unwrapped RFC 5545 document.
+func TestSubscribeResponseDTOStaysRawCalendar(t *testing.T) {
+	responseType := reflect.TypeOf(subscribev1.SubscribeRes{})
+	if responseType.NumField() != 1 || !responseType.Field(0).Anonymous {
+		t.Fatal("the subscribe response must stay a raw calendar stream without JSON body fields")
+	}
 }
 
 // TestLiveManageAPIDocI18NDoesNotReferenceRemovedDTOFields keeps apidoc translations aligned with DTOs.

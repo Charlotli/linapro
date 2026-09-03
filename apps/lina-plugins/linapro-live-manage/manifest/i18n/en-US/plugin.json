@@ -43,6 +43,7 @@
       },
       "liveTableTitle": "Live content list",
       "actions": {
+        "calendar": "Calendar",
         "start": "Start Live",
         "stop": "Stop Live"
       },
@@ -52,6 +53,9 @@
         "stopConfirm": "Stop this live now? The live room will return to idle.",
         "stopSuccess": "Live stopped",
         "addSong": "Add song",
+        "calendarCopy": "Copy link",
+        "calendarCopySuccess": "Subscription link copied",
+        "calendarHint": "Copy this link, then choose \"Subscribe Calendar\" in your phone calendar app to keep the public live schedule of this room in sync automatically.",
         "deleteSelectedLiveConfirm": "Delete the selected {count} live content records?",
         "deleteSelectedRoomConfirm": "Delete the selected {count} live rooms?"
       },

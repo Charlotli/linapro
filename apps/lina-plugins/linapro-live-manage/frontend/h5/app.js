@@ -35,13 +35,17 @@
     liveTitle: document.getElementById('live-title'),
     liveMeta: document.getElementById('live-meta'),
     program: document.getElementById('program'),
+    calendarBar: document.getElementById('calendar-bar'),
+    calendarOpen: document.getElementById('calendar-open'),
+    calendarCopy: document.getElementById('calendar-copy'),
+    toast: document.getElementById('toast'),
     noticeSection: document.getElementById('notice-section'),
     noticeIcon: document.getElementById('notice-icon'),
     noticeText: document.getElementById('notice-text'),
     retryButton: document.getElementById('retry-button')
   };
 
-  var state = { pollTimer: null, polling: false, hls: null, lastUrl: '', retryCount: 0 };
+  var state = { pollTimer: null, polling: false, hls: null, lastUrl: '', retryCount: 0, toastTimer: null };
 
   /* ---- 参数与地址 ---- */
 
@@ -53,7 +57,7 @@
     };
   }
 
-  function apiEndpoint() {
+  function apiBase() {
     var path = window.location.pathname;
     var marker = path.lastIndexOf('/h5');
     if (marker >= 0) {
@@ -64,7 +68,18 @@
     if (path.charAt(path.length - 1) === '/') {
       path = path.slice(0, -1);
     }
-    return path + '/api/v1/play';
+    return path;
+  }
+
+  function apiEndpoint() {
+    return apiBase() + '/api/v1/play';
+  }
+
+  function subscribeURL() {
+    var query = parseQuery();
+    return apiBase() + '/api/v1/subscribe' +
+      '?roomCode=' + encodeURIComponent(query.room) +
+      (query.tenant !== '' ? '&tenantId=' + encodeURIComponent(query.tenant) : '');
   }
 
   /* ---- 数据加载 ---- */
@@ -143,6 +158,7 @@
     dom.unmuteHint.classList.add('hidden');
     dom.liveRoom.classList.add('hidden');
     dom.coverDate.classList.add('hidden');
+    dom.calendarBar.classList.add('hidden');
     dom.liveTitle.textContent = '';
     dom.liveMeta.innerHTML = '';
     dom.program.innerHTML = '';
@@ -184,6 +200,7 @@
     dom.noticeSection.classList.add('hidden');
     dom.playerSection.classList.remove('hidden');
     dom.infoSection.classList.remove('hidden');
+    dom.calendarBar.classList.add('hidden');
     if (play.state === 2) {
       dom.replayBadge.classList.remove('hidden');
       setStateChip('replay', '已结束 · 回放');
@@ -205,6 +222,9 @@
     setStateChip('preview', '未开始 · 预告');
     renderHeader(play);
     renderProgram(play);
+    // 预告态展示日历订阅入口；进行中 / 回放 / 无直播态保持隐藏。
+    // 缺少房间参数时页面直接进入提示态，不会走到这里。
+    dom.calendarBar.classList.remove('hidden');
     if (play.coverUrl) {
       dom.coverImage.src = play.coverUrl;
       dom.coverImage.style.display = 'block';
@@ -383,6 +403,52 @@
       .replace(/"/g, '&quot;');
   }
 
+  /* ---- 日历订阅 ---- */
+
+  /* 轻提示：居中底部浮现，2 秒后自动消失。 */
+  function showToast(message) {
+    if (state.toastTimer) {
+      window.clearTimeout(state.toastTimer);
+    }
+    dom.toast.textContent = message;
+    dom.toast.classList.add('visible');
+    state.toastTimer = window.setTimeout(function () {
+      dom.toast.classList.remove('visible');
+      state.toastTimer = null;
+    }, 2000);
+  }
+
+  /* 复制文本：优先异步剪贴板，非安全上下文回退到隐藏输入框方案。 */
+  function copyText(text, onDone) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        onDone(true);
+      }, function () {
+        onDone(legacyCopy(text));
+      });
+      return;
+    }
+    onDone(legacyCopy(text));
+  }
+
+  function legacyCopy(text) {
+    var input = document.createElement('textarea');
+    input.value = text;
+    input.setAttribute('readonly', '');
+    input.style.position = 'fixed';
+    input.style.opacity = '0';
+    document.body.appendChild(input);
+    input.select();
+    var copied = false;
+    try {
+      copied = document.execCommand('copy');
+    } catch (e) {
+      copied = false;
+    }
+    document.body.removeChild(input);
+    return copied;
+  }
+
   /* ---- 播放器 ---- */
 
   function attachStream(url) {
@@ -515,6 +581,17 @@
   /* ---- 事件 ---- */
 
   dom.retryButton.addEventListener('click', refresh);
+
+  dom.calendarOpen.addEventListener('click', function () {
+    /* 由用户环境决定能否唤起日历应用：能识别 ICS 的环境会直接打开。 */
+    window.open(subscribeURL(), '_blank');
+  });
+
+  dom.calendarCopy.addEventListener('click', function () {
+    copyText(subscribeURL(), function (copied) {
+      showToast(copied ? '订阅链接已复制' : '复制失败，请长按地址栏复制');
+    });
+  });
 
   dom.playerRetry.addEventListener('click', function () {
     dom.playerError.classList.add('hidden');

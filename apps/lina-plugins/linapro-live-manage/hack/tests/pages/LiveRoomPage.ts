@@ -175,4 +175,44 @@ export class LiveRoomPage {
       .click();
     await waitForRouteReady(this.page);
   }
+
+  /** Open the calendar-subscription modal of the room found by name. */
+  async openCalendarModal(roomName: string) {
+    await this.fillSearchField("直播间名称", roomName);
+    await this.clickSearch();
+
+    const rowId = await this.findRowIdByText(roomName);
+    await this.rowById(rowId)
+      .locator("button:visible")
+      .filter({ hasText: /日历订阅|Calendar/i })
+      .first()
+      .click();
+
+    await waitForDialogReady(this.modal);
+  }
+
+  /** Full subscription link text rendered inside the calendar modal. */
+  async calendarModalSubscribeLink(): Promise<string> {
+    const textarea = this.modal.locator("textarea").first();
+    await textarea.waitFor({ state: "visible", timeout: 10000 });
+    return textarea.inputValue();
+  }
+
+  /** Whether the calendar modal renders the localized copy action. */
+  async calendarModalHasCopyButton(): Promise<boolean> {
+    return this.modal
+      .getByRole("button", { name: /复制链接|Copy link/i })
+      .first()
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
+  }
+
+  /** Localized subscription how-to hint inside the calendar modal. */
+  async calendarModalHintText(): Promise<string> {
+    // The vben modal renders a hidden aria-description paragraph first, so
+    // the lookup must target the visible hint paragraph only.
+    const hint = this.modal.locator("p:visible").first();
+    await hint.waitFor({ state: "visible", timeout: 10000 });
+    return (await hint.textContent()) ?? "";
+  }
 }

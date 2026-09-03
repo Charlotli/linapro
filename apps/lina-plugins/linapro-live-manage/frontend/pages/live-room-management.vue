@@ -23,6 +23,7 @@ import {
   liveroomDelete,
   liveroomList,
 } from './live-client';
+import LiveRoomCalendarModal from './live-room-calendar-modal.vue';
 import { buildRoomColumns, buildRoomQuerySchema } from './live-room-data';
 import LiveRoomModal from './live-room-modal.vue';
 
@@ -59,6 +60,10 @@ onMounted(async () => {
 
 const [LiveRoomModalRef, roomModalApi] = useVbenModal({
   connectedComponent: LiveRoomModal,
+});
+
+const [CalendarModalRef, calendarModalApi] = useVbenModal({
+  connectedComponent: LiveRoomCalendarModal,
 });
 
 const [Grid, gridApi] = useVbenVxeGrid({
@@ -123,6 +128,11 @@ function handleEdit(row: LiveRoom) {
   roomModalApi.open();
 }
 
+function handleCalendar(row: LiveRoom) {
+  calendarModalApi.setData({ roomCode: row.roomCode, roomName: row.roomName });
+  calendarModalApi.open();
+}
+
 async function handleDelete(row: LiveRoom) {
   await liveroomDelete(String(row.id));
   message.success($t('pages.common.deleteSuccess'));
@@ -180,6 +190,9 @@ function onReload() {
 
       <template #action="{ row }">
         <Space>
+          <ghost-button @click.stop="handleCalendar(row)">
+            {{ $t('plugin.linapro-live-manage.actions.calendar') }}
+          </ghost-button>
           <ghost-button @click.stop="handleEdit(row)">
             {{ $t('pages.common.edit') }}
           </ghost-button>
@@ -197,5 +210,6 @@ function onReload() {
     </Grid>
 
     <LiveRoomModalRef @reload="onReload" />
+    <CalendarModalRef />
   </Page>
 </template>

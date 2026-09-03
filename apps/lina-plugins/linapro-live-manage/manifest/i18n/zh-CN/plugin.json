@@ -43,6 +43,7 @@
       },
       "liveTableTitle": "直播内容列表",
       "actions": {
+        "calendar": "日历订阅",
         "start": "开启直播",
         "stop": "关闭直播"
       },
@@ -52,6 +53,9 @@
         "stopConfirm": "确认关闭该场直播吗？关闭后直播间将恢复空闲状态。",
         "stopSuccess": "直播已关闭",
         "addSong": "添加歌曲",
+        "calendarCopy": "复制链接",
+        "calendarCopySuccess": "订阅链接已复制",
+        "calendarHint": "复制后在手机日历中选择“订阅日历”并粘贴此链接，该直播间的公开直播日程将自动同步。",
         "deleteSelectedLiveConfirm": "确认删除选中的 {count} 条直播内容吗？",
         "deleteSelectedRoomConfirm": "确认删除选中的 {count} 个直播间吗？"
       },

@@ -31,6 +31,14 @@ export class LivePlayH5Page {
     return this.page.locator("#live-title");
   }
 
+  private get calendarBar() {
+    return this.page.locator("#calendar-bar");
+  }
+
+  private get toast() {
+    return this.page.locator("#toast");
+  }
+
   /** Open the H5 player page for one room without authentication. */
   async goto(roomCode: string) {
     await this.page.goto(
@@ -139,6 +147,32 @@ export class LivePlayH5Page {
     const date = this.page.locator("#cover-date");
     await date.waitFor({ state: "visible", timeout: 10000 });
     return (await date.textContent()) ?? "";
+  }
+
+  /** Whether the preview-only calendar subscription bar is displayed. */
+  async isCalendarBarVisible() {
+    return this.calendarBar.isVisible({ timeout: 5000 }).catch(() => false);
+  }
+
+  /** Click the copy-subscription-link action inside the calendar bar. */
+  async clickCopyCalendarLink() {
+    await this.page
+      .locator("#calendar-copy")
+      .click();
+  }
+
+  /**
+   * Assert the lightweight toast shows a result message. The toast element
+   * stays mounted with opacity 0, so the wait must target the .visible state
+   * class instead of plain visibility.
+   */
+  async expectToast(pattern: RegExp) {
+    const visibleToast = this.page.locator("#toast.visible");
+    await visibleToast.waitFor({ state: "visible", timeout: 5000 });
+    const text = (await visibleToast.textContent()) ?? "";
+    if (!pattern.test(text)) {
+      throw new Error(`expected toast matching ${pattern}, got: ${text}`);
+    }
   }
 }
 

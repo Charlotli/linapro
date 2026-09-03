@@ -61,6 +61,14 @@
         <h1 id="live-title" class="live-title"></h1>
         <div id="live-meta" class="live-meta"></div>
         <div id="program" class="program"></div>
+        <!-- 日历订阅入口：仅预告态展示 -->
+        <div id="calendar-bar" class="calendar-bar hidden">
+          <button id="calendar-open" class="calendar-button primary" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 2.8v4M16 2.8v4M8 13.5h3"/></svg>
+            添加到日历
+          </button>
+          <button id="calendar-copy" class="calendar-button" type="button">复制订阅链接</button>
+        </div>
       </div>
     </section>
 
@@ -75,6 +83,8 @@
 
     <footer class="page-footer"><span class="footer-brand">聚会直播</span>直播开始后页面自动进入播放</footer>
   </main>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
 
   <script src="/x/linapro-live-manage/h5/hls.light.min.js"></script>
   <script src="/x/linapro-live-manage/h5/app.js"></script>

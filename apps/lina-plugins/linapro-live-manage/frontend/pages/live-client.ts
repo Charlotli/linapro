@@ -166,3 +166,13 @@ export function liveStart(id: number) {
 export function liveStop(id: number) {
   return requestClient.put(liveApi(`live/${id}/stop`));
 }
+
+// buildSubscribeUrl 拼接观众端日历订阅链接，与公开订阅接口同源同参；
+// tenantId 缺省时省略参数，由公开接口按租户能力降级处理。
+export function buildSubscribeUrl(roomCode: string, tenantId?: number) {
+  const params = new URLSearchParams({ roomCode });
+  if (tenantId !== undefined) {
+    params.set('tenantId', String(tenantId));
+  }
+  return `${window.location.origin}/x/${pluginID}/api/v1/subscribe?${params.toString()}`;
+}

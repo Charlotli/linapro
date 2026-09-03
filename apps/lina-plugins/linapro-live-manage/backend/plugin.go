@@ -23,6 +23,8 @@ import (
 	livecontroller "lina-plugin-linapro-live-manage/backend/internal/controller/live"
 	liveroomcontroller "lina-plugin-linapro-live-manage/backend/internal/controller/liveroom"
 	playcontroller "lina-plugin-linapro-live-manage/backend/internal/controller/play"
+	subscribecontroller "lina-plugin-linapro-live-manage/backend/internal/controller/subscribe"
+	calendarsvc "lina-plugin-linapro-live-manage/backend/internal/service/calendar"
 	livesvc "lina-plugin-linapro-live-manage/backend/internal/service/live"
 	liveroomsvc "lina-plugin-linapro-live-manage/backend/internal/service/liveroom"
 	playsvc "lina-plugin-linapro-live-manage/backend/internal/service/play"
@@ -91,9 +93,11 @@ func registerRoutes(ctx context.Context, registrar pluginhost.HTTPRegistrar) err
 	// The viewer play service intentionally consumes only the tenant
 	// capability: anonymous viewers carry no user identity, and the tenant is
 	// an explicit request parameter validated against the tenant lifecycle.
+	// The calendar subscription service shares the same anonymous contract.
 	playInfoSvc := playsvc.New(tenantSvc)
+	calendarSvc := calendarsvc.New(tenantSvc)
 	routes.Group(routes.APIPrefix(), func(group pluginhost.RouteGroup) {
-		registerViewerRoutes(group, middlewares, playInfoSvc)
+		registerViewerRoutes(group, middlewares, playInfoSvc, calendarSvc)
 		registerAdminRoutes(group, middlewares, roomSvc, liveSvc)
 	})
 
@@ -101,24 +105,32 @@ func registerRoutes(ctx context.Context, registrar pluginhost.HTTPRegistrar) err
 }
 
 // registerViewerRoutes binds the anonymous viewer routes: one JSON endpoint
-// for play info and one static group serving the embedded H5 assets. Both
-// groups omit auth, tenancy, and permission middlewares because viewers carry
-// no JWT; the play service derives its tenant from the explicit request
-// parameter instead of the tenancy middleware.
+// for play info, one raw endpoint for the ICS calendar stream, and one static
+// group serving the embedded H5 assets. All groups omit auth, tenancy, and
+// permission middlewares because viewers carry no JWT; the services derive
+// their tenant from the explicit request parameter instead of the tenancy
+// middleware.
 func registerViewerRoutes(
 	group pluginhost.RouteGroup,
 	middlewares pluginhost.RouteMiddlewares,
 	playInfoSvc playsvc.Service,
+	calendarSvc calendarsvc.Service,
 ) {
 	group.Group("/api/v1", func(group pluginhost.RouteGroup) {
 		group.Middleware(
 			middlewares.NeverDoneCtx(),
-			middlewares.HandlerResponse(),
 			middlewares.CORS(),
 			middlewares.RequestBodyLimit(),
 			middlewares.Ctx(),
 		)
-		group.Bind(playcontroller.NewV1(playInfoSvc))
+		group.Group("/", func(group pluginhost.RouteGroup) {
+			group.Middleware(middlewares.HandlerResponse())
+			group.Bind(playcontroller.NewV1(playInfoSvc))
+		})
+		// The subscribe endpoint answers with a raw RFC 5545 stream that
+		// calendar clients cannot parse inside the JSON envelope, so it binds
+		// outside the HandlerResponse wrapper per the documented design.
+		group.Bind(subscribecontroller.NewV1(calendarSvc))
 	})
 	group.Group(h5RoutePrefix, func(group pluginhost.RouteGroup) {
 		group.Middleware(
