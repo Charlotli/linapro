@@ -43,7 +43,9 @@ test.describe("TC005 直播日程日历订阅", () => {
   });
 
   test("TC005a: 订阅接口返回含稳定UID的日历流", async ({ adminPage }) => {
-    // One room plus one not-started public live bound to it.
+    // One room plus one not-started public live bound to it. The create
+    // form leaves the date picker empty and the service defaults it to
+    // today, which lands inside the subscription window.
     const roomPage = new LiveRoomPage(adminPage);
     await roomPage.goto();
     await roomPage.createRoom(roomCode, roomName);
@@ -51,13 +53,6 @@ test.describe("TC005 直播日程日历订阅", () => {
     const livePage = new LiveContentPage(adminPage);
     await livePage.goto();
     await livePage.createLive(liveTitle, roomName, liveUrl);
-
-    // The create form leaves the date picker empty, which lands as the zero
-    // calendar date (2006-01-02); the subscription window only covers real
-    // dates, so pin the created live to today like an operator would.
-    execPgSQL(
-      `UPDATE plugin_linapro_live_manage_live SET live_date = CURRENT_DATE WHERE title = '${liveTitle}';`,
-    );
 
     const response = await adminPage.request.get(subscribeUrl(roomCode));
     expect(response.status()).toBe(200);

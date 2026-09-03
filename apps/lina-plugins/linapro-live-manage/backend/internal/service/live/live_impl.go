@@ -14,7 +14,6 @@ import (
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/os/gtime"
 
 	"lina-core/pkg/bizerr"
 	"lina-core/pkg/plugin/capability/tenantcap"
@@ -244,6 +243,26 @@ func (s *serviceImpl) Update(ctx context.Context, in UpdateInput) error {
 		tenantID  = s.tenantFilterContext(ctx).TenantID
 	)
 
+	data := buildLiveUpdateData(in, liveDate, normalizedSongList, updatedBy)
+
+	_, err = dao.Live.Ctx(ctx).
+		OmitNilData().
+		Where(tenantspi.TenantFilterColumn, tenantID).
+		Where(liveColumns.Id, in.Id).
+		Data(data).
+		Update()
+	return err
+}
+
+// buildLiveUpdateData projects the optional update fields onto the DO carrier:
+// only fields present in the request are populated so omitted fields keep
+// their stored values under OmitNilData.
+func buildLiveUpdateData(
+	in UpdateInput,
+	liveDate *time.Time,
+	normalizedSongList *string,
+	updatedBy int64,
+) do.Live {
 	data := do.Live{UpdatedBy: updatedBy}
 	if in.RoomId != nil {
 		data.RoomId = *in.RoomId
@@ -317,14 +336,7 @@ func (s *serviceImpl) Update(ctx context.Context, in UpdateInput) error {
 	if in.StartTime != nil {
 		data.StartTime = millisToTime(in.StartTime)
 	}
-
-	_, err = dao.Live.Ctx(ctx).
-		OmitNilData().
-		Where(tenantspi.TenantFilterColumn, tenantID).
-		Where(liveColumns.Id, in.Id).
-		Data(data).
-		Update()
-	return err
+	return data
 }
 
 // Delete soft-deletes live content records by IDs.
@@ -534,12 +546,13 @@ func normalizeSongList(songList string) (string, error) {
 }
 
 // parseLiveDate converts the date-only wire format into a stored date value.
-// Empty input defaults to today.
+// Empty input defaults to today. Formatting must use time.Now with the Go
+// layout: gtime.Format interprets PHP-style tokens and would emit the layout
+// digits literally, storing the constant "2006-01-02" instead of today.
 func parseLiveDate(liveDate string) (time.Time, error) {
 	trimmed := strings.TrimSpace(liveDate)
 	if trimmed == "" {
-		today := gtime.Now().Format(liveDateFormat)
-		trimmed = today
+		trimmed = time.Now().Format(liveDateFormat)
 	}
 	parsed, err := time.ParseInLocation(liveDateFormat, trimmed, time.Local)
 	if err != nil {
