@@ -1320,3 +1320,59 @@ body {
 .bible-body .sheet-empty {
   padding: 44px 0;
 }
+
+/* ---- 分享海报面板 ---- */
+
+.share-panel {
+  max-height: 86vh;
+}
+
+.share-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.share-poster-wrap {
+  width: 100%;
+  max-width: 320px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+}
+
+.share-poster-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.share-hint {
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  color: var(--gold);
+}
+
+.share-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.share-actions .calendar-button {
+  flex: 1;
+  margin: 0;
+}
+
+.share-wechat-panel {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--gold-soft);
+  border-radius: 12px;
+  background: var(--gold-soft);
+  color: var(--gold);
+  font-size: 12.5px;
+  line-height: 1.7;
+}

@@ -96,15 +96,22 @@ test.describe("TC006 观看统计与分享", () => {
     expect(badgeText).toMatch(/\d+ 人在看/);
 
     // Share bar is rendered for presentable content; desktop environments
-    // without the Web Share API degrade to the copy-link label.
+    // without the Web Share API degrade to the poster-sheet entry.
     expect(await h5.isShareBarVisible()).toBe(true);
     const hasNativeShare = await adminPage.evaluate(
       () => typeof navigator.share === "function",
     );
     if (!hasNativeShare) {
-      expect(await h5.shareButtonLabel()).toMatch(/复制链接/);
+      expect(await h5.shareButtonLabel()).toMatch(/分享海报/);
       await h5.clickShareButton();
-      await h5.expectToast(/链接已复制/);
+      expect(await h5.isShareSheetVisible()).toBe(true);
+      expect(await h5.isSharePosterVisible()).toBe(true);
+      const posterSrc = await h5.sharePosterSrc();
+      expect(posterSrc.startsWith("data:image/jpeg")).toBe(true);
+      // Poster must carry enough pixel data to stay legible when saved.
+      expect(posterSrc.length).toBeGreaterThan(10_000);
+      await h5.closeSheets();
+      expect(await h5.isShareSheetVisible()).toBe(false);
     }
   });
 

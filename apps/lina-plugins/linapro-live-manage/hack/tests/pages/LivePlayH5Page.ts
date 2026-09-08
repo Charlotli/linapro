@@ -247,6 +247,29 @@ export class LivePlayH5Page {
       .click();
   }
 
+  /** Whether the share poster sheet is open. */
+  async isShareSheetVisible() {
+    return this.page
+      .locator("#share-overlay")
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
+  }
+
+  /** Whether the generated poster image is rendered inside the sheet. */
+  async isSharePosterVisible() {
+    return this.page
+      .locator("#share-poster-wrap .share-poster-img")
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
+  }
+
+  /** Poster image source (data URL) for format assertions. */
+  async sharePosterSrc(): Promise<string> {
+    const img = this.page.locator("#share-poster-wrap .share-poster-img");
+    await img.waitFor({ state: "visible", timeout: 10000 });
+    return (await img.getAttribute("src")) ?? "";
+  }
+
   /**
    * Assert the lightweight toast shows a result message. The toast element
    * stays mounted with opacity 0, so the wait must target the .visible state
@@ -335,6 +358,10 @@ export class LivePlayH5Page {
       .waitFor({ state: "hidden", timeout: 5000 })
       .catch(() => {});
     await this.bibleOverlay
+      .waitFor({ state: "hidden", timeout: 5000 })
+      .catch(() => {});
+    await this.page
+      .locator("#share-overlay")
       .waitFor({ state: "hidden", timeout: 5000 })
       .catch(() => {});
   }

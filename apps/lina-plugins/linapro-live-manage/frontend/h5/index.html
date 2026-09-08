@@ -154,7 +154,35 @@
     </div>
   </div>
 
+  <!-- 分享海报面板：Canvas 直绘，长按图片保存/转发 -->
+  <div id="share-overlay" class="sheet-overlay hidden">
+    <div class="sheet-mask" data-sheet-close="share"></div>
+    <div class="sheet-panel share-panel" role="dialog" aria-label="分享海报">
+      <div class="sheet-grip" data-sheet-close="share" aria-hidden="true"></div>
+      <div class="sheet-header">
+        <span class="sheet-title">分享直播</span>
+        <button class="sheet-close" type="button" data-sheet-close="share" aria-label="关闭分享">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div class="sheet-body share-body">
+        <div id="share-poster-wrap" class="share-poster-wrap">
+          <canvas id="share-poster" width="640" height="960" aria-label="直播分享海报，长按保存"></canvas>
+        </div>
+        <div id="share-hint" class="share-hint">长按海报保存到相册，或转发给好友</div>
+        <div class="share-actions">
+          <button id="share-wechat-tip" class="calendar-button" type="button">微信内转发指引</button>
+          <button id="share-copy" class="calendar-button primary" type="button">复制链接</button>
+        </div>
+        <div id="share-wechat-panel" class="share-wechat-panel hidden">
+          微信内分享：点右上角「···」→「发送给朋友」，或长按上方海报保存后发到聊天。
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="/x/linapro-live-manage/h5/hls.light.min.js"></script>
+  <script src="/x/linapro-live-manage/h5/qrcode.js"></script>
   <script src="/x/linapro-live-manage/h5/app.js"></script>
 </body>
 </html>

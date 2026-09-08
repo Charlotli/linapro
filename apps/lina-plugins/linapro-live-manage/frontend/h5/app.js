@@ -60,6 +60,13 @@
     bibleNav: document.getElementById('bible-nav'),
     biblePrev: document.getElementById('bible-prev'),
     bibleNext: document.getElementById('bible-next'),
+    shareOverlay: document.getElementById('share-overlay'),
+    sharePosterWrap: document.getElementById('share-poster-wrap'),
+    sharePoster: document.getElementById('share-poster'),
+    shareHint: document.getElementById('share-hint'),
+    shareWechatTip: document.getElementById('share-wechat-tip'),
+    shareCopy: document.getElementById('share-copy'),
+    shareWechatPanel: document.getElementById('share-wechat-panel'),
     toast: document.getElementById('toast'),
     noticeSection: document.getElementById('notice-section'),
     noticeIcon: document.getElementById('notice-icon'),
@@ -81,7 +88,9 @@
     bibleBooks: null,
     bibleBookSn: null,
     bibleChapter: null,
-    bibleView: 'books'
+    bibleView: 'books',
+    bibleChapters: null,
+    lastPlay: null
   };
 
   /* ---- 参数与地址 ---- */
@@ -378,6 +387,7 @@
   function closeSheets() {
     dom.announcementOverlay.classList.add('hidden');
     dom.bibleOverlay.classList.add('hidden');
+    dom.shareOverlay.classList.add('hidden');
   }
 
   function gotoChapter(bookSn, chapter) {
@@ -829,6 +839,7 @@
   }
 
   function renderHeader(play) {
+    state.lastPlay = play || state.lastPlay;
     if (play.roomName) {
       dom.liveRoom.textContent = play.roomName;
       dom.liveRoom.classList.remove('hidden');
@@ -1208,30 +1219,204 @@
     });
   });
 
-  /* 分享入口：支持系统分享的环境唤起 navigator.share，
-     其余环境降级为复制观播页链接，结果通过轻提示反馈。 */
-  function handleShare() {
-    var shareUrl = window.location.href;
-    if (navigator.share) {
-      navigator.share({
-        title: document.title,
-        url: shareUrl
-      }).catch(function () { /* 用户取消分享不提示 */ });
-      return;
+  /* ---- 分享海报 ---- */
+
+  /* Canvas 直接绘制（不用 html2canvas）：640x960 小幅 JPEG，低端机
+     也秒出图；二维码由 vendor 的 qrcode.js 同步生成，无网络等待。
+     微信浏览器不支持长按 canvas，必须先转成 img 再展示。 */
+  function drawSharePoster() {
+    var play = state.lastPlay || {};
+    var canvas = dom.sharePoster;
+    var ctx = canvas.getContext('2d');
+    var w = canvas.width;
+    var h = canvas.height;
+    var pad = 44;
+
+    ctx.clearRect(0, 0, w, h);
+    /* 背景：夜幕纵向渐变 + 品牌光晕。 */
+    var bg = ctx.createLinearGradient(0, 0, 0, h);
+    bg.addColorStop(0, '#141a2b');
+    bg.addColorStop(1, '#0b0e17');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    var glow = ctx.createRadialGradient(w - 60, 70, 10, w - 60, 70, 260);
+    glow.addColorStop(0, 'rgba(61, 123, 255, 0.24)');
+    glow.addColorStop(1, 'rgba(61, 123, 255, 0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, w, h);
+
+    var glowB = ctx.createRadialGradient(40, h - 160, 10, 40, h - 160, 240);
+    glowB.addColorStop(0, 'rgba(123, 92, 255, 0.18)');
+    glowB.addColorStop(1, 'rgba(123, 92, 255, 0)');
+    ctx.fillStyle = glowB;
+    ctx.fillRect(0, 0, w, h);
+
+    /* 顶部品牌条：礼堂 LIVE。 */
+    ctx.fillStyle = '#e9c98d';
+    ctx.font = '600 26px -apple-system, "PingFang SC", sans-serif';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('礼 堂 直 播', pad, 86);
+    ctx.fillStyle = 'rgba(233, 201, 141, 0.55)';
+    ctx.font = '400 15px sans-serif';
+    ctx.fillText('L I V E  S T R E A M', pad, 114);
+    ctx.strokeStyle = 'rgba(233, 201, 141, 0.4)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad, 140);
+    ctx.lineTo(w - pad, 140);
+    ctx.stroke();
+
+    /* 直播标题：自动换行，最多三行。 */
+    var title = String(play.title || play.roomName || '直播').slice(0, 60);
+    ctx.fillStyle = '#f4f6fb';
+    ctx.font = '650 40px -apple-system, "PingFang SC", sans-serif';
+    var y = 216;
+    var line = '';
+    for (var i = 0; i < title.length; i++) {
+      var test = line + title.charAt(i);
+      if (ctx.measureText(test).width > w - pad * 2) {
+        ctx.fillText(line, pad, y);
+        y += 58;
+        line = '';
+        if (y > 216 + 58 * 2) {
+          line = '…';
+          break;
+        }
+      } else {
+        line = test;
+      }
     }
-    copyText(shareUrl, function (copied) {
-      showToast(copied ? '链接已复制' : '复制失败，请长按地址栏复制');
-    });
+    if (line) {
+      ctx.fillText(line, pad, y);
+      y += 58;
+    }
+
+    /* 信息行：日期 / 场地。 */
+    ctx.fillStyle = '#a8b0c2';
+    ctx.font = '400 24px -apple-system, "PingFang SC", sans-serif';
+    var metaParts = [];
+    if (play.liveDate) {
+      metaParts.push(play.liveDate + (play.startTime ? ' ' + formatTime(play.startTime) : ''));
+    }
+    if (play.roomName) {
+      metaParts.push(play.roomName);
+    }
+    ctx.fillText(metaParts.join(' · ').slice(0, 40), pad, y + 34);
+
+    /* 二维码：指向当前观播页。 */
+    var qrSize = 300;
+    var qrX = (w - qrSize) / 2;
+    var qrY = y + 92;
+    try {
+      var qr = window.qrcode(0, 'M');
+      qr.addData(window.location.href);
+      qr.make();
+      var cell = qrSize / qr.getModuleCount();
+      ctx.fillStyle = '#ffffff';
+      /* 圆角白底托盘。 */
+      var trayR = 20;
+      var trayPad = 18;
+      ctx.beginPath();
+      ctx.moveTo(qrX - trayPad + trayR, qrY - trayPad);
+      ctx.arcTo(qrX + qrSize + trayPad, qrY - trayPad, qrX + qrSize + trayPad, qrY + qrSize + trayPad, trayR);
+      ctx.arcTo(qrX + qrSize + trayPad, qrY + qrSize + trayPad, qrX - trayPad, qrY + qrSize + trayPad, trayR);
+      ctx.arcTo(qrX - trayPad, qrY + qrSize + trayPad, qrX - trayPad, qrY - trayPad, trayR);
+      ctx.arcTo(qrX - trayPad, qrY - trayPad, qrX + qrSize + trayPad, qrY - trayPad, trayR);
+      ctx.fill();
+      ctx.fillStyle = '#0b0e17';
+      for (var row = 0; row < qr.getModuleCount(); row++) {
+        for (var col = 0; col < qr.getModuleCount(); col++) {
+          if (qr.isDark(row, col)) {
+            ctx.fillRect(
+              qrX + col * cell,
+              qrY + row * cell,
+              Math.ceil(cell),
+              Math.ceil(cell)
+            );
+          }
+        }
+      }
+    } catch (e) {
+      /* 二维码生成失败不阻塞海报：保底展示提示条。 */
+      ctx.fillStyle = '#f4f6fb';
+      ctx.font = '400 22px sans-serif';
+      ctx.fillText('二维码生成失败，请复制链接分享', pad, qrY + qrSize / 2);
+    }
+
+    /* 底部提示。 */
+    ctx.fillStyle = '#6d7486';
+    ctx.font = '400 22px -apple-system, "PingFang SC", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('长按识别二维码观看直播', w / 2, h - 52);
+    ctx.textAlign = 'left';
+  }
+
+  function showShareSheet() {
+    dom.shareOverlay.classList.remove('hidden');
+    dom.shareHint.classList.remove('hidden');
+    dom.sharePosterWrap.classList.remove('hidden');
+    dom.shareWechatPanel.classList.add('hidden');
+    /* 同步重绘：二维码库同步、绘制 <10ms，无需 loading。 */
+    try {
+      drawSharePoster();
+      dom.sharePosterWrap.innerHTML = '';
+      var img = document.createElement('img');
+      img.className = 'share-poster-img';
+      img.alt = '直播分享海报，长按保存';
+      img.src = dom.sharePoster.toDataURL('image/jpeg', 0.86);
+      dom.sharePosterWrap.appendChild(img);
+    } catch (e) {
+      /* 极端环境 canvas 不可用：隐藏海报仅保留链接操作。 */
+      dom.sharePosterWrap.classList.add('hidden');
+      dom.shareHint.classList.add('hidden');
+    }
+  }
+
+  function handleShare() {
+    /* 支持 Web Share 且可携带文件的移动环境（微信外主流浏览器）：
+       直接把海报图片递给系统分享面板。 */
+    if (navigator.canShare && dom.sharePoster) {
+      try {
+        drawSharePoster();
+        dom.sharePoster.toBlob(function (blob) {
+          if (blob && navigator.canShare({ files: [new File([blob], 'share.jpg', { type: 'image/jpeg' })] })) {
+            navigator.share({
+              title: document.title,
+              files: [new File([blob], 'share.jpg', { type: 'image/jpeg' })]
+            }).catch(function () { /* 用户取消分享不提示 */ });
+            return;
+          }
+          showShareSheet();
+        }, 'image/jpeg', 0.86);
+        return;
+      } catch (e) {
+        /* 继续走海报面板降级。 */
+      }
+    }
+    showShareSheet();
+  }
+
+  function closeShareSheet() {
+    dom.shareOverlay.classList.add('hidden');
   }
 
   dom.shareButton.addEventListener('click', handleShare);
+  dom.shareCopy.addEventListener('click', function () {
+    copyText(window.location.href, function (copied) {
+      showToast(copied ? '链接已复制' : '复制失败，请长按地址栏复制');
+    });
+  });
+  dom.shareWechatTip.addEventListener('click', function () {
+    dom.shareWechatPanel.classList.toggle('hidden');
+  });
 
-  /* 桌面等无系统分享面板的环境：按钮文案降级为“复制链接”，
+  /* 桌面等无系统分享面板的环境：按钮文案降级为“分享海报”，
      与实际行为保持一致。 */
   if (!navigator.share) {
     var shareLabel = document.getElementById('share-button-label');
     if (shareLabel) {
-      shareLabel.textContent = '复制链接';
+      shareLabel.textContent = '分享海报';
     }
   }
 
