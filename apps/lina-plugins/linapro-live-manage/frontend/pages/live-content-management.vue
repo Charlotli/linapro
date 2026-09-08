@@ -12,7 +12,7 @@ import { computed, onMounted, ref } from 'vue';
 
 import { Page, useVbenModal } from '@vben/common-ui';
 
-import { message, Modal, Popconfirm, Space } from 'ant-design-vue';
+import { message, Modal, Popconfirm, Space, Switch } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { $t } from '#/locales';
@@ -24,6 +24,7 @@ import {
   liveList,
   liveStart,
   liveStop,
+  liveUpdate,
   liveroomOptions,
 } from './live-client';
 import { buildLiveColumns, buildLiveQuerySchema } from './live-content-data';
@@ -157,6 +158,21 @@ async function handleStop(row: LiveContent) {
   await gridApi.query();
 }
 
+async function handleReplaySwitch(row: LiveContent, checked: boolean) {
+  try {
+    await liveUpdate(row.id, { replayEnabled: checked });
+    row.replayEnabled = checked;
+    message.success(
+      checked
+        ? $t('plugin.linapro-live-manage.messages.replayEnabledSuccess')
+        : $t('plugin.linapro-live-manage.messages.replayDisabledSuccess'),
+    );
+  } catch (error) {
+    row.replayEnabled = !checked;
+    console.error(error);
+  }
+}
+
 function handleMultiDelete() {
   const rows = gridApi.grid.getCheckboxRecords() as LiveContent[];
   const ids = rows.map((row) => row.id);
@@ -204,6 +220,14 @@ function onReload() {
 
       <template #isPublic="{ row }">
         <DictTag :dicts="livePublicDicts" :value="String(row.isPublic)" />
+      </template>
+
+      <template #replayEnabled="{ row }">
+        <Switch
+          :checked="row.replayEnabled"
+          :disabled="row.state !== 2"
+          @change="(checked: any) => handleReplaySwitch(row, !!checked)"
+        />
       </template>
 
       <template #action="{ row }">

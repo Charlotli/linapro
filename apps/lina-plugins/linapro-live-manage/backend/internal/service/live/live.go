@@ -12,6 +12,7 @@ import (
 	"lina-core/pkg/plugin/capability/bizctxcap"
 	"lina-core/pkg/plugin/capability/tenantcap"
 	"lina-core/pkg/plugin/capability/usercap"
+	"lina-plugin-linapro-live-manage/backend/internal/service/view"
 )
 
 // Live state values (matching the plugin_live_state dictionary).
@@ -119,6 +120,7 @@ type serviceImpl struct {
 	bizCtxSvc bizctxcap.Service // Business context bridge
 	tenantSvc tenantcap.Service // Tenant capability bridge
 	userSvc   usercap.Service   // User domain projection capability
+	viewSvc   view.Service      // Watch-statistics service for list assembly
 }
 
 // New creates and returns a new Service instance.
@@ -126,11 +128,13 @@ func New(
 	bizCtxSvc bizctxcap.Service,
 	tenantSvc tenantcap.Service,
 	userSvc usercap.Service,
+	viewSvc view.Service,
 ) Service {
 	return &serviceImpl{
 		bizCtxSvc: bizCtxSvc,
 		tenantSvc: tenantSvc,
 		userSvc:   userSvc,
+		viewSvc:   viewSvc,
 	}
 }
 
@@ -151,6 +155,8 @@ type ListItem struct {
 	*LiveEntity          // Live content entity
 	RoomName      string // Live room name resolved in batch
 	CreatedByName string // Creator username
+	OnlineCount   int64  // Watch sessions online in the last 60 seconds; zero when none
+	TotalViews    int64  // Deduplicated watch sessions recorded for the live; zero when none
 }
 
 // ListOutput defines output for List function.
@@ -185,6 +191,7 @@ type CreateInput struct {
 	State            int    // Live state: 0=not started 1=ongoing 2=finished
 	IsPublic         int    // Visibility: 1=public 0=private
 	StartTime        *int64 // Start time as Unix milliseconds; nil means unset
+	ReplayEnabled    *bool  // Replay visibility switch; nil defaults to true on create
 }
 
 // UpdateInput defines input for Update function.
@@ -214,4 +221,5 @@ type UpdateInput struct {
 	State            *int    // Live state: 0=not started 1=ongoing 2=finished
 	IsPublic         *int    // Visibility: 1=public 0=private
 	StartTime        *int64  // Start time as Unix milliseconds
+	ReplayEnabled    *bool   // Replay visibility switch; nil means keep the current value
 }

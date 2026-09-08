@@ -15,6 +15,9 @@
     "plugin:linapro-live-manage:room:remove": {
       "title": "删除直播间"
     },
+    "plugin:linapro-live-manage:room:announce": {
+      "title": "直播间公告"
+    },
     "plugin:linapro-live-manage:live": {
       "title": "直播内容"
     },

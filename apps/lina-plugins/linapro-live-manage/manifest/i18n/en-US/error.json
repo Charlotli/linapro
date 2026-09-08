@@ -2,6 +2,19 @@
   "error": {
     "live": {
       "manage": {
+        "announcement": {
+          "not": {
+            "found": "Announcement does not exist"
+          },
+          "room": {
+            "not": {
+              "found": "Live room does not exist"
+            }
+          },
+          "title": {
+            "required": "Announcement title is required"
+          }
+        },
         "live": {
           "date": {
             "invalid": "Live date must be in YYYY-MM-DD format"
@@ -49,6 +62,13 @@
             "invalid": "Live room type is invalid"
           },
           "unavailable": "Live room does not exist or is disabled"
+        },
+        "view": {
+          "session": {
+            "key": {
+              "invalid": "Watch session key is invalid; refresh the page and try again"
+            }
+          }
         },
         "song": {
           "list": {

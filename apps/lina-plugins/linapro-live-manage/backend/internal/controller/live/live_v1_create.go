@@ -45,6 +45,7 @@ func (c *ControllerV1) Create(ctx context.Context, req *v1.CreateReq) (res *v1.C
 		State:            state,
 		IsPublic:         isPublic,
 		StartTime:        req.StartTime,
+		ReplayEnabled:    req.ReplayEnabled,
 	})
 	if err != nil {
 		return nil, err

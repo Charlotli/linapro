@@ -32,4 +32,6 @@ type ListRes struct {
 type ListItem struct {
 	LiveItem
 	CreatedByName string `json:"createdByName" dc:"Creator username" eg:"admin"`
+	OnlineCount   int64  `json:"onlineCount" dc:"Watch sessions with a heartbeat inside the last 60 seconds; zero when nobody is watching" eg:"3"`
+	TotalViews    int64  `json:"totalViews" dc:"Deduplicated watch sessions recorded for the live across page refreshes" eg:"42"`
 }

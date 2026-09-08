@@ -20,14 +20,20 @@ import (
 
 	"lina-core/pkg/plugin/pluginhost"
 	livemanage "lina-plugin-linapro-live-manage"
+	announcementcontroller "lina-plugin-linapro-live-manage/backend/internal/controller/announcement"
+	biblecontroller "lina-plugin-linapro-live-manage/backend/internal/controller/bible"
 	livecontroller "lina-plugin-linapro-live-manage/backend/internal/controller/live"
 	liveroomcontroller "lina-plugin-linapro-live-manage/backend/internal/controller/liveroom"
 	playcontroller "lina-plugin-linapro-live-manage/backend/internal/controller/play"
 	subscribecontroller "lina-plugin-linapro-live-manage/backend/internal/controller/subscribe"
+	viewcontroller "lina-plugin-linapro-live-manage/backend/internal/controller/view"
+	announcementsvc "lina-plugin-linapro-live-manage/backend/internal/service/announcement"
+	biblesvc "lina-plugin-linapro-live-manage/backend/internal/service/bible"
 	calendarsvc "lina-plugin-linapro-live-manage/backend/internal/service/calendar"
 	livesvc "lina-plugin-linapro-live-manage/backend/internal/service/live"
 	liveroomsvc "lina-plugin-linapro-live-manage/backend/internal/service/liveroom"
 	playsvc "lina-plugin-linapro-live-manage/backend/internal/service/play"
+	viewsvc "lina-plugin-linapro-live-manage/backend/internal/service/view"
 )
 
 // linapro-live-manage plugin constants.
@@ -85,36 +91,54 @@ func registerRoutes(ctx context.Context, registrar pluginhost.HTTPRegistrar) err
 		tenantSvc,
 		services.Users(),
 	)
+	// The viewer play service intentionally consumes only the tenant
+	// capability: anonymous viewers carry no user identity, and the tenant is
+	// an explicit request parameter validated against the tenant lifecycle.
+	// The calendar subscription and watch-statistics services share the same
+	// anonymous contract; the statistics service reuses the play service so
+	// the tenant and visibility contracts can never drift apart.
+	playInfoSvc := playsvc.New(tenantSvc)
+	calendarSvc := calendarsvc.New(tenantSvc)
+	viewStatsSvc := viewsvc.New(tenantSvc, playInfoSvc)
 	liveSvc := livesvc.New(
 		services.BizCtx(),
 		tenantSvc,
 		services.Users(),
+		viewStatsSvc,
 	)
-	// The viewer play service intentionally consumes only the tenant
-	// capability: anonymous viewers carry no user identity, and the tenant is
-	// an explicit request parameter validated against the tenant lifecycle.
-	// The calendar subscription service shares the same anonymous contract.
-	playInfoSvc := playsvc.New(tenantSvc)
-	calendarSvc := calendarsvc.New(tenantSvc)
+	// The announcement service reuses the shared play service on the viewer
+	// side so room resolution and tenant errors stay contract-identical, and
+	// consumes the admin capability services for the tenant-scoped CRUD.
+	announcementSvc := announcementsvc.New(
+		services.BizCtx(),
+		tenantSvc,
+		services.Users(),
+		playInfoSvc,
+	)
+	bibleSvc := biblesvc.New()
 	routes.Group(routes.APIPrefix(), func(group pluginhost.RouteGroup) {
-		registerViewerRoutes(group, middlewares, playInfoSvc, calendarSvc)
-		registerAdminRoutes(group, middlewares, roomSvc, liveSvc)
+		registerViewerRoutes(group, middlewares, playInfoSvc, calendarSvc, viewStatsSvc, announcementSvc, bibleSvc)
+		registerAdminRoutes(group, middlewares, roomSvc, liveSvc, announcementSvc)
 	})
 
 	return nil
 }
 
 // registerViewerRoutes binds the anonymous viewer routes: one JSON endpoint
-// for play info, one raw endpoint for the ICS calendar stream, and one static
-// group serving the embedded H5 assets. All groups omit auth, tenancy, and
-// permission middlewares because viewers carry no JWT; the services derive
-// their tenant from the explicit request parameter instead of the tenancy
-// middleware.
+// for play info plus the paginated replay library, one JSON endpoint for
+// watch heartbeats, one raw endpoint for the ICS calendar stream, and one
+// static group serving the embedded H5 assets. All groups omit auth, tenancy,
+// and permission middlewares because viewers carry no JWT; the services
+// derive their tenant from the explicit request parameter instead of the
+// tenancy middleware.
 func registerViewerRoutes(
 	group pluginhost.RouteGroup,
 	middlewares pluginhost.RouteMiddlewares,
 	playInfoSvc playsvc.Service,
 	calendarSvc calendarsvc.Service,
+	viewStatsSvc viewsvc.Service,
+	announcementSvc announcementsvc.Service,
+	bibleSvc biblesvc.Service,
 ) {
 	group.Group("/api/v1", func(group pluginhost.RouteGroup) {
 		group.Middleware(
@@ -126,6 +150,9 @@ func registerViewerRoutes(
 		group.Group("/", func(group pluginhost.RouteGroup) {
 			group.Middleware(middlewares.HandlerResponse())
 			group.Bind(playcontroller.NewV1(playInfoSvc))
+			group.Bind(viewcontroller.NewV1(viewStatsSvc))
+			group.Bind(announcementcontroller.NewViewerV1(announcementSvc))
+			group.Bind(biblecontroller.NewV1(bibleSvc))
 		})
 		// The subscribe endpoint answers with a raw RFC 5545 stream that
 		// calendar clients cannot parse inside the JSON envelope, so it binds
@@ -151,6 +178,7 @@ func registerAdminRoutes(
 	middlewares pluginhost.RouteMiddlewares,
 	roomSvc liveroomsvc.Service,
 	liveSvc livesvc.Service,
+	announcementSvc announcementsvc.Service,
 ) {
 	group.Group("/api/v1", func(group pluginhost.RouteGroup) {
 		group.Middleware(
@@ -168,6 +196,7 @@ func registerAdminRoutes(
 			)
 			group.Bind(liveroomcontroller.NewV1(roomSvc))
 			group.Bind(livecontroller.NewV1(liveSvc))
+			group.Bind(announcementcontroller.NewV1(announcementSvc))
 		})
 	})
 }

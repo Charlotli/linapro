@@ -28,9 +28,12 @@ type LiveItem struct {
 	Reception        string `json:"reception" dc:"Reception arrangement or contact info" eg:"Mary 13800000000"`
 	State            int    `json:"state" dc:"Live state: 0=not started, 1=ongoing, 2=finished" eg:"0"`
 	IsPublic         int    `json:"isPublic" dc:"Visibility: 1=public, 0=private" eg:"1"`
+	ReplayEnabled    bool   `json:"replayEnabled" dc:"Whether the finished live is offered as a public replay in the viewer replay library; ongoing lives are unaffected" eg:"true"`
 	StartTime        *int64 `json:"startTime" dc:"Actual start time of the live as Unix timestamp in milliseconds; null means unset" eg:"1776756000000"`
 	CreatedBy        int64  `json:"createdBy" dc:"Creator user ID" eg:"1"`
 	UpdatedBy        int64  `json:"updatedBy" dc:"Last updated user ID" eg:"1"`
 	CreatedAt        *int64 `json:"createdAt" dc:"Creation time as Unix timestamp in milliseconds" eg:"1776756000000"`
 	UpdatedAt        *int64 `json:"updatedAt" dc:"Last updated time as Unix timestamp in milliseconds" eg:"1776757800000"`
+	OnlineCount      int64  `json:"onlineCount" dc:"Watch sessions with a heartbeat inside the last 60 seconds; zero when nobody is watching" eg:"3"`
+	TotalViews       int64  `json:"totalViews" dc:"Deduplicated watch sessions recorded for the live across page refreshes" eg:"42"`
 }

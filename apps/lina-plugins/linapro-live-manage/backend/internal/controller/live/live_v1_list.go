@@ -30,6 +30,8 @@ func (c *ControllerV1) List(ctx context.Context, req *v1.ListReq) (res *v1.ListR
 		items = append(items, &v1.ListItem{
 			LiveItem:      toAPILiveItem(item.LiveEntity, item.RoomName),
 			CreatedByName: item.CreatedByName,
+			OnlineCount:   item.OnlineCount,
+			TotalViews:    item.TotalViews,
 		})
 	}
 	return &v1.ListRes{List: items, Total: out.Total}, nil

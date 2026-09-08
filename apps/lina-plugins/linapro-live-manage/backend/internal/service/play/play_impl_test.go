@@ -138,7 +138,7 @@ func TestBuildPlayInfoWithholdsFields(t *testing.T) {
 		IsPublic:  playVisibilityPublic,
 	}
 
-	info := buildPlayInfo(room, live)
+	info := buildPlayInfo(0, room, live)
 	if info.LiveUrl != live.LiveUrl {
 		t.Fatalf("expected ongoing play URL %q, got %q", live.LiveUrl, info.LiveUrl)
 	}
@@ -150,7 +150,7 @@ func TestBuildPlayInfoWithholdsFields(t *testing.T) {
 	}
 
 	live.State = playLiveStateNotStarted
-	info = buildPlayInfo(room, live)
+	info = buildPlayInfo(0, room, live)
 	if info.LiveUrl != "" {
 		t.Fatalf("expected empty play URL for not-started live, got %q", info.LiveUrl)
 	}

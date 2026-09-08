@@ -22,6 +22,7 @@ import (
 	"lina-plugin-linapro-live-manage/backend/internal/dao"
 	"lina-plugin-linapro-live-manage/backend/internal/model/do"
 	"lina-plugin-linapro-live-manage/backend/internal/service/liveroom"
+	"lina-plugin-linapro-live-manage/backend/internal/service/view"
 )
 
 const (
@@ -76,13 +77,24 @@ func (s *serviceImpl) List(ctx context.Context, in ListInput) (*ListOutput, erro
 	if err != nil {
 		return nil, err
 	}
+	viewStats, err := s.resolveViewStatsMap(ctx, list)
+	if err != nil {
+		return nil, err
+	}
 
 	items := make([]*ListItem, 0, len(list))
 	for _, item := range list {
+		stats := viewStats[item.Id]
+		onlineCount, totalViews := int64(0), int64(0)
+		if stats != nil {
+			onlineCount, totalViews = stats.OnlineCount, stats.TotalViews
+		}
 		items = append(items, &ListItem{
 			LiveEntity:    item,
 			RoomName:      roomNames[item.RoomId],
 			CreatedByName: userNameMap[item.CreatedBy],
+			OnlineCount:   onlineCount,
+			TotalViews:    totalViews,
 		})
 	}
 
@@ -90,6 +102,20 @@ func (s *serviceImpl) List(ctx context.Context, in ListInput) (*ListOutput, erro
 		List:  items,
 		Total: total,
 	}, nil
+}
+
+// resolveViewStatsMap assembles the watch counters for the current page with
+// exactly one grouped query. Empty pages skip the query entirely, and lives
+// without sessions simply fall back to zero counters in the caller.
+func (s *serviceImpl) resolveViewStatsMap(ctx context.Context, list []*LiveEntity) (map[int64]*view.Stats, error) {
+	if len(list) == 0 || s.viewSvc == nil {
+		return map[int64]*view.Stats{}, nil
+	}
+	liveIDs := make([]int64, 0, len(list))
+	for _, item := range list {
+		liveIDs = append(liveIDs, item.Id)
+	}
+	return s.viewSvc.BatchGet(ctx, liveIDs)
 }
 
 // GetById retrieves one live content record by ID.
@@ -151,7 +177,10 @@ func (s *serviceImpl) Create(ctx context.Context, in CreateInput) (int64, error)
 		tenantID  = s.tenantFilterContext(ctx).TenantID
 	)
 
-	// GoFrame auto-fills created_at and updated_at.
+	// GoFrame auto-fills created_at and updated_at. The replay switch
+	// defaults to true when the request omits it, matching the column
+	// default so existing behavior is unchanged.
+	replayEnabled := in.ReplayEnabled == nil || *in.ReplayEnabled
 	id, err := dao.Live.Ctx(ctx).Data(do.Live{
 		TenantId:         tenantID,
 		RoomId:           in.RoomId,
@@ -178,6 +207,7 @@ func (s *serviceImpl) Create(ctx context.Context, in CreateInput) (int64, error)
 		State:            in.State,
 		IsPublic:         in.IsPublic,
 		StartTime:        millisToTime(in.StartTime),
+		ReplayEnabled:    replayEnabled,
 		CreatedBy:        createdBy,
 		UpdatedBy:        createdBy,
 	}).InsertAndGetId()
@@ -335,6 +365,9 @@ func buildLiveUpdateData(
 	}
 	if in.StartTime != nil {
 		data.StartTime = millisToTime(in.StartTime)
+	}
+	if in.ReplayEnabled != nil {
+		data.ReplayEnabled = *in.ReplayEnabled
 	}
 	return data
 }

@@ -44,4 +44,5 @@ type Live struct {
 	CreatedAt        *time.Time // Creation time
 	UpdatedAt        *time.Time // Update time
 	DeletedAt        *time.Time // Deletion time
+	ReplayEnabled    any        // Whether the finished live is offered as a public replay; ongoing lives are unaffected
 }

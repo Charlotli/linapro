@@ -37,6 +37,7 @@ type UpdateReq struct {
 	State            *int    `json:"state" dc:"Live state: 0=not started, 1=ongoing, 2=finished" eg:"1"`
 	IsPublic         *int    `json:"isPublic" dc:"Visibility: 1=public, 0=private" eg:"1"`
 	StartTime        *int64  `json:"startTime" dc:"Actual start time of the live as Unix timestamp in milliseconds" eg:"1776756000000"`
+	ReplayEnabled    *bool   `json:"replayEnabled" dc:"Whether the finished live is offered as a public replay in the viewer replay library; omitted keeps the current value; ongoing lives are unaffected" eg:"true"`
 }
 
 // UpdateRes Live content update response

@@ -52,6 +52,7 @@ type LiveColumns struct {
 	CreatedAt        string // Creation time
 	UpdatedAt        string // Update time
 	DeletedAt        string // Deletion time
+	ReplayEnabled    string // Whether the finished live is offered as a public replay; ongoing lives are unaffected
 }
 
 // liveColumns holds the columns for the table plugin_linapro_live_manage_live.
@@ -87,6 +88,7 @@ var liveColumns = LiveColumns{
 	CreatedAt:        "created_at",
 	UpdatedAt:        "updated_at",
 	DeletedAt:        "deleted_at",
+	ReplayEnabled:    "replay_enabled",
 }
 
 // NewLiveDao creates and returns a new DAO object for table data access.

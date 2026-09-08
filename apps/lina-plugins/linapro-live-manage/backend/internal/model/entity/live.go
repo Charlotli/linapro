@@ -41,4 +41,5 @@ type Live struct {
 	CreatedAt        *time.Time `json:"createdAt"        orm:"created_at"        description:"Creation time"`
 	UpdatedAt        *time.Time `json:"updatedAt"        orm:"updated_at"        description:"Update time"`
 	DeletedAt        *time.Time `json:"deletedAt"        orm:"deleted_at"        description:"Deletion time"`
+	ReplayEnabled    bool       `json:"replayEnabled"    orm:"replay_enabled"    description:"Whether the finished live is offered as a public replay; ongoing lives are unaffected"`
 }

@@ -39,13 +39,30 @@
         "startTime": "开播时间",
         "state": "直播状态",
         "status": "直播间状态",
-        "title": "直播主题"
+        "title": "直播主题",
+        "replayEnabled": "公开回放",
+        "onlineCount": "在线人数",
+        "totalViews": "累计观看"
       },
       "liveTableTitle": "直播内容列表",
       "actions": {
         "calendar": "日历订阅",
         "start": "开启直播",
-        "stop": "关闭直播"
+        "stop": "关闭直播",
+        "qrcode": "二维码",
+        "announcement": "公告"
+      },
+      "announcement": {
+        "title": "公告管理",
+        "add": "新增公告",
+        "addTitle": "新增公告",
+        "editTitle": "编辑公告",
+        "titlePlaceholder": "请输入公告标题",
+        "contentPlaceholder": "请输入公告内容，支持换行",
+        "titleRequired": "公告标题不能为空",
+        "noContent": "（无内容）",
+        "empty": "暂无公告",
+        "sort": "排序"
       },
       "messages": {
         "startConfirm": "确认开启该场直播吗？开启后直播间将进入直播中状态。",
@@ -57,7 +74,13 @@
         "calendarCopySuccess": "订阅链接已复制",
         "calendarHint": "复制后在手机日历中选择“订阅日历”并粘贴此链接，该直播间的公开直播日程将自动同步。",
         "deleteSelectedLiveConfirm": "确认删除选中的 {count} 条直播内容吗？",
-        "deleteSelectedRoomConfirm": "确认删除选中的 {count} 个直播间吗？"
+        "deleteSelectedRoomConfirm": "确认删除选中的 {count} 个直播间吗？",
+        "replayEnabledSuccess": "已开启公开回放",
+        "replayDisabledSuccess": "已关闭公开回放",
+        "replayEnabledHint": "开启后，本场直播结束并已录制的播放地址将出现在观众端“往期回放”中",
+        "qrcodeHint": "使用手机扫码或复制链接，打开该直播间的 H5 观播页",
+        "watchCopy": "复制链接",
+        "watchCopySuccess": "观播链接已复制"
       },
       "name": "直播后台管理",
       "placeholders": {

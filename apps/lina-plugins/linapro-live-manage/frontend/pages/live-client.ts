@@ -67,12 +67,15 @@ export interface LiveContent {
   reception: string;
   state: number;
   isPublic: number;
+  replayEnabled: boolean;
   startTime: number | null;
   createdBy: number;
   createdByName: string;
   updatedBy: number;
   createdAt: number | null;
   updatedAt: number | null;
+  onlineCount: number;
+  totalViews: number;
 }
 
 export interface LiveContentListParams {
@@ -175,4 +178,53 @@ export function buildSubscribeUrl(roomCode: string, tenantId?: number) {
     params.set('tenantId', String(tenantId));
   }
   return `${window.location.origin}/x/${pluginID}/api/v1/subscribe?${params.toString()}`;
+}
+
+// buildWatchUrl 拼接观众端 H5 观播页链接，参数与公开播放接口一致；
+// tenantId 缺省时省略参数，由 H5 页面按租户能力降级处理。
+export function buildWatchUrl(roomCode: string, tenantId?: number) {
+  const params = new URLSearchParams({ room: roomCode });
+  if (tenantId !== undefined) {
+    params.set('tenant', String(tenantId));
+  }
+  return `${window.location.origin}/x/${pluginID}/h5?${params.toString()}`;
+}
+
+export interface Announcement {
+  id: number;
+  roomId: number;
+  title: string;
+  content: string;
+  enabled: boolean;
+  sort: number;
+  createdAt: number | null;
+  updatedAt: number | null;
+}
+
+export interface AnnouncementListParams {
+  roomId: number;
+  pageNum?: number;
+  pageSize?: number;
+}
+
+export async function announcementList(params: AnnouncementListParams) {
+  const res = await requestClient.get<{ list: Announcement[]; total: number }>(
+    liveApi('announcement'),
+    { params },
+  );
+  return { items: res.list, total: res.total };
+}
+
+export function announcementAdd(data: Partial<Announcement> & { roomId: number }) {
+  return requestClient.post(liveApi('announcement'), data);
+}
+
+export function announcementUpdate(id: number, data: Partial<Announcement>) {
+  return requestClient.put(liveApi('announcement'), { id, ...data });
+}
+
+export function announcementDelete(id: number) {
+  return requestClient.delete(liveApi('announcement'), {
+    params: { id },
+  });
 }

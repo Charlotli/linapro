@@ -23,7 +23,9 @@ import {
   liveroomDelete,
   liveroomList,
 } from './live-client';
+import LiveRoomAnnouncementModal from './live-room-announcement-modal.vue';
 import LiveRoomCalendarModal from './live-room-calendar-modal.vue';
+import LiveRoomQrcodeModal from './live-room-qrcode-modal.vue';
 import { buildRoomColumns, buildRoomQuerySchema } from './live-room-data';
 import LiveRoomModal from './live-room-modal.vue';
 
@@ -64,6 +66,14 @@ const [LiveRoomModalRef, roomModalApi] = useVbenModal({
 
 const [CalendarModalRef, calendarModalApi] = useVbenModal({
   connectedComponent: LiveRoomCalendarModal,
+});
+
+const [QrcodeModalRef, qrcodeModalApi] = useVbenModal({
+  connectedComponent: LiveRoomQrcodeModal,
+});
+
+const [AnnouncementModalRef, announcementModalApi] = useVbenModal({
+  connectedComponent: LiveRoomAnnouncementModal,
 });
 
 const [Grid, gridApi] = useVbenVxeGrid({
@@ -133,6 +143,16 @@ function handleCalendar(row: LiveRoom) {
   calendarModalApi.open();
 }
 
+function handleQrcode(row: LiveRoom) {
+  qrcodeModalApi.setData({ roomCode: row.roomCode, roomName: row.roomName });
+  qrcodeModalApi.open();
+}
+
+function handleAnnouncement(row: LiveRoom) {
+  announcementModalApi.setData({ roomId: row.id, roomName: row.roomName });
+  announcementModalApi.open();
+}
+
 async function handleDelete(row: LiveRoom) {
   await liveroomDelete(String(row.id));
   message.success($t('pages.common.deleteSuccess'));
@@ -190,6 +210,12 @@ function onReload() {
 
       <template #action="{ row }">
         <Space>
+          <ghost-button @click.stop="handleAnnouncement(row)">
+            {{ $t('plugin.linapro-live-manage.actions.announcement') }}
+          </ghost-button>
+          <ghost-button @click.stop="handleQrcode(row)">
+            {{ $t('plugin.linapro-live-manage.actions.qrcode') }}
+          </ghost-button>
           <ghost-button @click.stop="handleCalendar(row)">
             {{ $t('plugin.linapro-live-manage.actions.calendar') }}
           </ghost-button>
@@ -211,5 +237,7 @@ function onReload() {
 
     <LiveRoomModalRef @reload="onReload" />
     <CalendarModalRef />
+    <QrcodeModalRef />
+    <AnnouncementModalRef />
   </Page>
 </template>

@@ -39,13 +39,30 @@
         "startTime": "Start time",
         "state": "Live state",
         "status": "Room status",
-        "title": "Live title"
+        "title": "Live title",
+        "replayEnabled": "Public replay",
+        "onlineCount": "Online viewers",
+        "totalViews": "Total views"
       },
       "liveTableTitle": "Live content list",
       "actions": {
         "calendar": "Calendar",
         "start": "Start Live",
-        "stop": "Stop Live"
+        "stop": "Stop Live",
+        "qrcode": "QR Code",
+        "announcement": "Announcements"
+      },
+      "announcement": {
+        "title": "Announcement Management",
+        "add": "New Announcement",
+        "addTitle": "New Announcement",
+        "editTitle": "Edit Announcement",
+        "titlePlaceholder": "Enter the announcement title",
+        "contentPlaceholder": "Enter the announcement body, line breaks supported",
+        "titleRequired": "Announcement title is required",
+        "noContent": "(no content)",
+        "empty": "No announcements yet",
+        "sort": "Sort"
       },
       "messages": {
         "startConfirm": "Start this live now? The live room will become live.",
@@ -57,7 +74,13 @@
         "calendarCopySuccess": "Subscription link copied",
         "calendarHint": "Copy this link, then choose \"Subscribe Calendar\" in your phone calendar app to keep the public live schedule of this room in sync automatically.",
         "deleteSelectedLiveConfirm": "Delete the selected {count} live content records?",
-        "deleteSelectedRoomConfirm": "Delete the selected {count} live rooms?"
+        "deleteSelectedRoomConfirm": "Delete the selected {count} live rooms?",
+        "replayEnabledSuccess": "Public replay enabled",
+        "replayDisabledSuccess": "Public replay disabled",
+        "replayEnabledHint": "When enabled, the finished live and its recorded play URL appear in the viewer replay library",
+        "qrcodeHint": "Scan with a phone or copy the link to open the H5 watch page of this live room",
+        "watchCopy": "Copy link",
+        "watchCopySuccess": "Watch link copied"
       },
       "name": "Live Management",
       "placeholders": {

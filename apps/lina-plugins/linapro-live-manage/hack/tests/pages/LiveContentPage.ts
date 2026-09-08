@@ -217,4 +217,37 @@ export class LiveContentPage {
       .click();
     await waitForRouteReady(this.page);
   }
+
+  /** Whether the table header renders a column with the given title. */
+  async hasColumnHeader(title: string): Promise<boolean> {
+    // The vben vxe-table adapter renders header cells as
+    // `.vxe-header--column` (not the upstream `.vxe-header--cell`).
+    return this.page
+      .locator(".vxe-header--column:visible", { hasText: title })
+      .first()
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
+  }
+
+  /** Whether the replay switch of the row found by title is checked. */
+  async replaySwitchChecked(title: string): Promise<boolean> {
+    const rowId = await this.findRowIdByText(title);
+    const state = await this.rowById(rowId)
+      .locator(".ant-switch")
+      .first()
+      .getAttribute("aria-checked");
+    return state === "true";
+  }
+
+  /** Toggle the replay switch of the row found by title. */
+  async toggleReplaySwitch(title: string) {
+    const rowId = await this.findRowIdByText(title);
+    await this.rowById(rowId)
+      .locator(".ant-switch")
+      .first()
+      .click();
+    // The switch updates through the live update API; wait for the reload
+    // request to finish before asserting persisted state.
+    await waitForRouteReady(this.page);
+  }
 }

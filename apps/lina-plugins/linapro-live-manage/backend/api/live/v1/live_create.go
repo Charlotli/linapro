@@ -36,6 +36,7 @@ type CreateReq struct {
 	State            *int   `json:"state" d:"0" dc:"Live state: 0=not started, 1=ongoing, 2=finished" eg:"0"`
 	IsPublic         *int   `json:"isPublic" d:"1" dc:"Visibility: 1=public, 0=private" eg:"1"`
 	StartTime        *int64 `json:"startTime" dc:"Actual start time of the live as Unix timestamp in milliseconds; omitted means unset" eg:"1776756000000"`
+	ReplayEnabled    *bool  `json:"replayEnabled" dc:"Whether the finished live is offered as a public replay in the viewer replay library; defaults to true when omitted; ongoing lives are unaffected" eg:"true"`
 }
 
 // CreateRes Live content create response

@@ -68,7 +68,28 @@ func (s *serviceImpl) Get(ctx context.Context, in GetInput) (*PlayInfo, error) {
 	if live == nil {
 		return nil, bizerr.NewCode(CodePlayNotFound)
 	}
-	return buildPlayInfo(room, live), nil
+	return buildPlayInfo(tenantID, room, live), nil
+}
+
+// ResolveRoom resolves the live-room reference for sibling viewer services.
+func (s *serviceImpl) ResolveRoom(ctx context.Context, in ResolveRoomInput) (*RoomRef, error) {
+	tenantID, err := s.resolveTenantID(ctx, in.TenantId)
+	if err != nil {
+		return nil, err
+	}
+	room, err := loadRoom(ctx, tenantID, in.RoomCode)
+	if err != nil {
+		return nil, err
+	}
+	if room == nil {
+		return nil, nil
+	}
+	return &RoomRef{
+		Id:       room.Id,
+		TenantId: tenantID,
+		RoomCode: room.RoomCode,
+		RoomName: room.RoomName,
+	}, nil
 }
 
 // resolveTenantID maps the explicit tenant parameter onto the query tenant. It
@@ -149,10 +170,12 @@ func playURLVisible(state int) bool {
 }
 
 // probeLive loads the newest public live of one room in the requested state.
+// Finished lives additionally require the replay switch so a replay-disabled
+// record never surfaces as the replay fallback; ongoing and preview states
+// are unaffected by that switch.
 func probeLive(ctx context.Context, tenantID int, roomID int64, state int) (*entity.Live, error) {
 	cols := dao.Live.Columns()
-	var live *entity.Live
-	err := dao.Live.Ctx(ctx).
+	query := dao.Live.Ctx(ctx).
 		Fields(
 			cols.Id, cols.RoomId, cols.Title, cols.CoverUrl, cols.LiveUrl,
 			cols.LiveDate, cols.StartTime, cols.State, cols.Host, cols.SongName,
@@ -163,7 +186,12 @@ func probeLive(ctx context.Context, tenantID int, roomID int64, state int) (*ent
 		Where(cols.TenantId, tenantID).
 		Where(cols.RoomId, roomID).
 		Where(cols.State, state).
-		Where(cols.IsPublic, playVisibilityPublic).
+		Where(cols.IsPublic, playVisibilityPublic)
+	if state == playLiveStateFinished {
+		query = query.Where(cols.ReplayEnabled, true)
+	}
+	var live *entity.Live
+	err := query.
 		OrderDesc(cols.Id).
 		Limit(1).
 		Scan(&live)
@@ -176,12 +204,13 @@ func probeLive(ctx context.Context, tenantID int, roomID int64, state int) (*ent
 // buildPlayInfo projects the room and live rows into the viewer-facing
 // payload. The play URL is withheld for not-started lives and the push URL is
 // never exposed.
-func buildPlayInfo(room *entity.Room, live *entity.Live) *PlayInfo {
+func buildPlayInfo(tenantID int, room *entity.Room, live *entity.Live) *PlayInfo {
 	playURL := ""
 	if playURLVisible(live.State) {
 		playURL = live.LiveUrl
 	}
 	return &PlayInfo{
+		TenantId:         tenantID,
 		RoomId:           room.Id,
 		RoomCode:         room.RoomCode,
 		RoomName:         room.RoomName,

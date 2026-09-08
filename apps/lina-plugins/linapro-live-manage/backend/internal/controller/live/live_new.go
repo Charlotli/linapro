@@ -56,6 +56,7 @@ func toAPILiveItem(e *livesvc.LiveEntity, roomName string) v1.LiveItem {
 		Reception:        e.Reception,
 		State:            e.State,
 		IsPublic:         e.IsPublic,
+		ReplayEnabled:    e.ReplayEnabled,
 		StartTime:        apitime.Milli(e.StartTime),
 		CreatedBy:        e.CreatedBy,
 		UpdatedBy:        e.UpdatedBy,

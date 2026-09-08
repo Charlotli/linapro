@@ -16,4 +16,5 @@ import (
 // change add-live-h5-player.
 type IPlayV1 interface {
 	Get(ctx context.Context, req *v1.GetReq) (res *v1.GetRes, err error)
+	Replays(ctx context.Context, req *v1.ReplaysReq) (res *v1.ReplaysRes, err error)
 }

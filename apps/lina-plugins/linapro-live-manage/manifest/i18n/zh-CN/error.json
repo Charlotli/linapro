@@ -2,6 +2,19 @@
   "error": {
     "live": {
       "manage": {
+        "announcement": {
+          "not": {
+            "found": "公告不存在"
+          },
+          "room": {
+            "not": {
+              "found": "直播间不存在"
+            }
+          },
+          "title": {
+            "required": "公告标题不能为空"
+          }
+        },
         "live": {
           "date": {
             "invalid": "直播日期必须为 YYYY-MM-DD 格式"
@@ -49,6 +62,13 @@
             "invalid": "直播间类型取值无效"
           },
           "unavailable": "直播间不存在或已禁用"
+        },
+        "view": {
+          "session": {
+            "key": {
+              "invalid": "观看会话标识无效，请刷新页面后重试"
+            }
+          }
         },
         "song": {
           "list": {

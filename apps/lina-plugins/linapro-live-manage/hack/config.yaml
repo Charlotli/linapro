@@ -7,7 +7,11 @@ gfcli:
         path: "internal"
         tables: >-
           plugin_linapro_live_manage_room,
-          plugin_linapro_live_manage_live
+          plugin_linapro_live_manage_live,
+          plugin_linapro_live_manage_view_session,
+          plugin_linapro_live_manage_announcement,
+          plugin_linapro_live_manage_bible_book,
+          plugin_linapro_live_manage_bible_verse
         removePrefix: "plugin_linapro_live_manage_"
         importPrefix: "lina-plugin-linapro-live-manage/backend/internal"
         descriptionTag: true

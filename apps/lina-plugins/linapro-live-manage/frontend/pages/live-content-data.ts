@@ -81,6 +81,22 @@ export function buildLiveColumns(): VxeGridProps['columns'] {
       slots: { default: 'isPublic' },
     },
     {
+      field: 'replayEnabled',
+      title: $t('plugin.linapro-live-manage.fields.replayEnabled'),
+      minWidth: 100,
+      slots: { default: 'replayEnabled' },
+    },
+    {
+      field: 'onlineCount',
+      title: $t('plugin.linapro-live-manage.fields.onlineCount'),
+      minWidth: 100,
+    },
+    {
+      field: 'totalViews',
+      title: $t('plugin.linapro-live-manage.fields.totalViews'),
+      minWidth: 100,
+    },
+    {
       field: 'preacher',
       title: $t('plugin.linapro-live-manage.fields.preacher'),
       minWidth: 120,

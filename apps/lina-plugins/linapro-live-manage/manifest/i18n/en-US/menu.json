@@ -15,6 +15,9 @@
     "plugin:linapro-live-manage:room:remove": {
       "title": "Delete"
     },
+    "plugin:linapro-live-manage:room:announce": {
+      "title": "Announcements"
+    },
     "plugin:linapro-live-manage:live": {
       "title": "Live Content"
     },

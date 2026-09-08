@@ -12,6 +12,7 @@ import {
   message,
   RadioGroup,
   Select,
+  Switch,
 } from 'ant-design-vue';
 
 import { $t } from '#/locales';
@@ -57,6 +58,7 @@ interface FormData {
   reception: string;
   state: number;
   isPublic: number;
+  replayEnabled: boolean;
   startTime: number | null;
 }
 
@@ -85,6 +87,7 @@ const defaultValues: FormData = {
   reception: '',
   state: 0,
   isPublic: 1,
+  replayEnabled: true,
   startTime: null,
 };
 
@@ -214,6 +217,7 @@ const [Modal, modalApi] = useVbenModal({
           reception: record.reception || '',
           state: record.state,
           isPublic: record.isPublic,
+          replayEnabled: record.replayEnabled ?? true,
           startTime: record.startTime ?? null,
         };
       } finally {
@@ -328,6 +332,12 @@ async function handleConfirm() {
           />
         </FormItem>
       </div>
+      <FormItem :label="$t('plugin.linapro-live-manage.fields.replayEnabled')">
+        <Switch v-model:checked="formData.replayEnabled" />
+        <span class="text-muted-foreground ms-2 text-xs">
+          {{ $t('plugin.linapro-live-manage.messages.replayEnabledHint') }}
+        </span>
+      </FormItem>
 
       <div class="grid lg:grid-cols-2 sm:grid-cols-1">
         <FormItem :label="$t('plugin.linapro-live-manage.fields.liveUrl')">

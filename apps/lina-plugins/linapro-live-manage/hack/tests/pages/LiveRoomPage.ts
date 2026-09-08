@@ -215,4 +215,128 @@ export class LiveRoomPage {
     await hint.waitFor({ state: "visible", timeout: 10000 });
     return (await hint.textContent()) ?? "";
   }
+
+  /** Open the QR-code watch-link modal of the room found by name. */
+  async openQrcodeModal(roomName: string) {
+    await this.fillSearchField("直播间名称", roomName);
+    await this.clickSearch();
+
+    const rowId = await this.findRowIdByText(roomName);
+    await this.rowById(rowId)
+      .locator("button:visible")
+      .filter({ hasText: /二维码|QR Code/i })
+      .first()
+      .click();
+
+    await waitForDialogReady(this.modal);
+  }
+
+  /** Whether the QR modal renders a generated QR-code image. */
+  async qrcodeModalHasImage(): Promise<boolean> {
+    return this.modal
+      .locator("img[src^='data:image']")
+      .first()
+      .isVisible({ timeout: 10000 })
+      .catch(() => false);
+  }
+
+  /** Full H5 watch link rendered inside the QR modal. */
+  async qrcodeModalWatchLink(): Promise<string> {
+    const textarea = this.modal.locator("textarea").first();
+    await textarea.waitFor({ state: "visible", timeout: 10000 });
+    return textarea.inputValue();
+  }
+
+  /** Whether the QR modal renders the localized copy action. */
+  async qrcodeModalHasCopyButton(): Promise<boolean> {
+    return this.modal
+      .getByRole("button", { name: /复制链接|Copy link/i })
+      .first()
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
+  }
+
+  /** Open the announcement management modal of the room found by name. */
+  async openAnnouncementModal(roomName: string) {
+    await this.fillSearchField("直播间名称", roomName);
+    await this.clickSearch();
+
+    const rowId = await this.findRowIdByText(roomName);
+    await this.rowById(rowId)
+      .locator("button:visible")
+      // Ghost buttons render two-character CJK labels with an inserted
+      // space ("公 告"), so the filter must tolerate optional whitespace.
+      .filter({ hasText: /公\s*告|Announcement/i })
+      .first()
+      .click();
+
+    await waitForDialogReady(this.modal);
+  }
+
+  /** Create one announcement inside the open modal. */
+  async createAnnouncement(title: string, content: string) {
+    await this.modal
+      .getByRole("button", { name: /新增公告|New Announcement/i })
+      .first()
+      .click();
+    await this.modal
+      .getByPlaceholder("请输入公告标题")
+      .fill(title);
+    await this.modal
+      .getByPlaceholder("请输入公告内容，支持换行")
+      .fill(content);
+    await this.modal
+      .getByRole("button", { name: /保\s*存|Save/i })
+      .first()
+      .click();
+    await this.modal
+      .locator(".announcement-row", { hasText: title })
+      .first()
+      .waitFor({ state: "visible", timeout: 10000 });
+  }
+
+  /** Announcement card count in the open modal. */
+  async announcementRowCount(): Promise<number> {
+    return this.modal.locator(".announcement-row").count();
+  }
+
+  /** Whether one announcement card (found by title) shows the empty switch. */
+  async announcementSwitchChecked(title: string): Promise<boolean> {
+    const row = this.modal
+      .locator(".announcement-row", { hasText: title })
+      .first();
+    await row.waitFor({ state: "visible", timeout: 10000 });
+    const button = row.locator(".ant-switch");
+    await button.waitFor({ state: "visible", timeout: 5000 });
+    return (await button.getAttribute("aria-checked")) === "true";
+  }
+
+  /** Toggle the enable switch of one announcement card. */
+  async toggleAnnouncementSwitch(title: string) {
+    const row = this.modal
+      .locator(".announcement-row", { hasText: title })
+      .first();
+    await row.locator(".ant-switch").click();
+    await this.page.waitForTimeout(500);
+  }
+
+  /** Delete one announcement card by title and confirm the popconfirm. */
+  async deleteAnnouncement(title: string) {
+    const row = this.modal
+      .locator(".announcement-row", { hasText: title })
+      .first();
+    await row
+      .locator("button")
+      .filter({ hasText: /删\s*除|Delete/i })
+      .first()
+      .click();
+    const popconfirm = await waitForConfirmOverlay(this.page);
+    const confirmBtn = popconfirm.getByRole("button", {
+      name: /确\s*定|OK|是/i,
+    });
+    if (await confirmBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await confirmBtn.click();
+    }
+    await row.waitFor({ state: "hidden", timeout: 10000 }).catch(() => {});
+  }
 }

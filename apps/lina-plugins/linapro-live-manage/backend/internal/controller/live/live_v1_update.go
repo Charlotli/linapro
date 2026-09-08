@@ -38,6 +38,7 @@ func (c *ControllerV1) Update(ctx context.Context, req *v1.UpdateReq) (res *v1.U
 		State:            req.State,
 		IsPublic:         req.IsPublic,
 		StartTime:        req.StartTime,
+		ReplayEnabled:    req.ReplayEnabled,
 	})
 	if err != nil {
 		return nil, err
