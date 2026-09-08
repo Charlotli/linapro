@@ -185,9 +185,19 @@
       return;
     }
     dom.announcementList.innerHTML = state.announcements.map(function (item) {
+      var timeHtml = '';
+      var milli = Number(item.updatedAt);
+      if (milli > 0) {
+        var d = new Date(milli);
+        var pad = function (n) { return ('0' + n).slice(-2); };
+        timeHtml = '<div class="announcement-time">' +
+          d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+          ' 更新</div>';
+      }
       return '<article class="announcement-card">' +
         '<h4 class="announcement-title">' + escapeHtml(item.title || '公告') + '</h4>' +
         '<div class="announcement-content">' + renderMultiline(item.content) + '</div>' +
+        timeHtml +
         '</article>';
     }).join('');
   }
@@ -332,7 +342,8 @@
     }
     var chips = [];
     for (var i = 1; i <= book.chapterCount; i++) {
-      chips.push('<button type="button" class="bible-chapter" data-chapter="' + i + '">' + i + '</button>');
+      var current = state.bibleChapter === i ? ' data-current="1"' : '';
+      chips.push('<button type="button" class="bible-chapter"' + current + ' data-chapter="' + i + '">' + i + '</button>');
     }
     dom.bibleBody.innerHTML = '<div class="bible-grid">' + chips.join('') + '</div>';
   }
