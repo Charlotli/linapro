@@ -156,9 +156,23 @@ test.describe("TC008 直播间公告与圣经阅读器", () => {
     expect(await h5.bibleHeaderText()).toContain("创世记");
     expect(await h5.bibleFirstVerseText()).toContain("起初");
 
+    // Reader resets the sheet scroll position on every view render: reading
+    // a tall chapter bottom-up then paging must land at the new chapter top.
+    await h5.scrollBibleToBottom();
+    const beforeNext = await h5.bibleScrollTop();
+    expect(beforeNext).toBeGreaterThan(0);
+
     // Next from Genesis 1 goes to Genesis 2 (within the same volume).
     await h5.bibleNext();
     expect(await h5.bibleHeaderText()).toContain("第2章");
+    expect(await h5.bibleScrollTop()).toBe(0);
+
+    // Paged-back chapters render from cache without a changed content shape.
+    await h5.biblePrev();
+    expect(await h5.bibleHeaderText()).toContain("第1章");
+    expect(await h5.bibleVerseCount()).toBe(31);
+    expect(await h5.bibleFirstVerseText()).toContain("起初");
+    expect(await h5.hasBibleRetry()).toBe(false);
 
     // Back to chapters, then step back to the book grid.
     await h5.bibleBack();

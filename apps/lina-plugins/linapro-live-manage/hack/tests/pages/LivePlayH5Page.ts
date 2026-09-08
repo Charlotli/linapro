@@ -422,6 +422,36 @@ export class LivePlayH5Page {
   async bibleBack() {
     await this.page.locator("#bible-back").click();
   }
+
+  /** Current scrollTop of the bible sheet scroll container. */
+  async bibleScrollTop(): Promise<number> {
+    return this.bibleBody.evaluate((el) => el.scrollTop);
+  }
+
+  /** Scroll the bible sheet body to the bottom (to make the scroll-reset
+   * behavior observable on chapter changes). */
+  async scrollBibleToBottom() {
+    await this.bibleBody.evaluate((el) => {
+      el.scrollTop = el.scrollHeight;
+    });
+  }
+
+  /** Whether the reader body currently shows a retry button. */
+  async hasBibleRetry(): Promise<boolean> {
+    return this.bibleBody
+      .locator(".sheet-retry")
+      .isVisible({ timeout: 2000 })
+      .catch(() => false);
+  }
+
+  /** Click the retry button inside the bible sheet body. */
+  async clickBibleRetry() {
+    await this.bibleBody.locator(".sheet-retry").click();
+    await this.bibleBody
+      .locator(".bible-book, .bible-verse, .sheet-empty")
+      .first()
+      .waitFor({ state: "visible", timeout: 10000 });
+  }
 }
 
 async function expectVisible(locator: ReturnType<Page["locator"]>, pattern: RegExp) {

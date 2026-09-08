@@ -1109,6 +1109,24 @@ body {
   font-size: 13.5px;
 }
 
+/* 失败态可重试按钮：与空态同视觉层级，但可点击并带按压反馈。 */
+.sheet-retry {
+  display: block;
+  margin: 0 auto;
+  padding: 10px 22px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text-2);
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.sheet-retry:active {
+  opacity: 0.7;
+}
+
 /* ---- 公告卡片 ---- */
 
 .announcement-card {

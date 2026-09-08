@@ -150,7 +150,8 @@
 
   /* ---- 公告面板 ---- */
 
-  /* 拉取当前直播间的启用公告；失败静默为空态，不打扰观看。 */
+  /* 拉取当前直播间的启用公告；网络或业务失败返回 null（与真实空列表
+     区分，面板据此显示可重试的失败态而非误导性的"暂无公告"）。 */
   function fetchAnnouncements() {
     var query = parseQuery();
     if (!query.room) {
@@ -167,14 +168,18 @@
         if (result.status >= 200 && result.status < 300 && payload.code === 0 && payload.data) {
           return payload.data.list || [];
         }
-        return [];
+        return null;
       })
       .catch(function () {
-        return [];
+        return null;
       });
   }
 
-  function renderAnnouncements() {
+  function renderAnnouncements(failed) {
+    if (failed) {
+      dom.announcementList.innerHTML = '<button type="button" class="sheet-retry">公告加载失败，轻触重试</button>';
+      return;
+    }
     if (!state.announcements.length) {
       dom.announcementList.innerHTML = '<div class="sheet-empty">暂无公告</div>';
       return;
@@ -190,14 +195,16 @@
   function openAnnouncementSheet() {
     dom.announcementOverlay.classList.remove('hidden');
     dom.announcementList.innerHTML = '<div class="sheet-empty">加载中…</div>';
+    dom.announcementList.scrollTop = 0;
     fetchAnnouncements().then(function (items) {
       state.announcements = items || [];
-      renderAnnouncements();
+      renderAnnouncements(items === null);
     });
   }
 
   /* ---- 圣经面板：书卷 → 章节 → 阅读 ---- */
 
+  /* 书卷目录整页缓存；章节按 (卷,章) 缓存上次内容，重复翻页不重复请求。 */
   function fetchBibleBooks() {
     if (state.bibleBooks) {
       return Promise.resolve(state.bibleBooks);
@@ -214,14 +221,22 @@
           state.bibleBooks = payload.data.list || [];
           return state.bibleBooks;
         }
-        return [];
+        return null;
       })
       .catch(function () {
-        return [];
+        return null;
       });
   }
 
+  function chapterCacheKey(volumeSn, chapter) {
+    return volumeSn + ':' + chapter;
+  }
+
   function fetchBibleChapter(volumeSn, chapter) {
+    var cached = state.bibleChapters && state.bibleChapters[chapterCacheKey(volumeSn, chapter)];
+    if (cached) {
+      return Promise.resolve(cached);
+    }
     return requestWithTimeout(bibleChapterEndpoint(volumeSn, chapter))
       .then(function (response) {
         return response.json().then(function (payload) {
@@ -231,12 +246,19 @@
       .then(function (result) {
         var payload = result.payload || {};
         if (result.status >= 200 && result.status < 300 && payload.code === 0 && payload.data) {
-          return payload.data;
+          var data = payload.data;
+          if (data && data.list && data.list.length) {
+            if (!state.bibleChapters) {
+              state.bibleChapters = {};
+            }
+            state.bibleChapters[chapterCacheKey(volumeSn, chapter)] = data;
+          }
+          return data;
         }
         return { list: [], book: '', chapter: chapter };
       })
       .catch(function () {
-        return { list: [], book: '', chapter: chapter };
+        return { list: [], book: '', chapter: chapter, failed: true };
       });
   }
 
@@ -256,6 +278,7 @@
       dom.bibleBack.classList.add('hidden');
       dom.bibleNav.classList.add('hidden');
       renderBibleBooks();
+      dom.bibleBody.scrollTop = 0;
       return;
     }
     if (state.bibleView === 'chapters') {
@@ -264,6 +287,7 @@
       dom.bibleBack.classList.remove('hidden');
       dom.bibleNav.classList.add('hidden');
       renderBibleChapters(book);
+      dom.bibleBody.scrollTop = 0;
       return;
     }
     var reading = bookBySn(state.bibleBookSn);
@@ -271,15 +295,20 @@
     dom.bibleBack.classList.remove('hidden');
     dom.bibleNav.classList.remove('hidden');
     dom.bibleBody.innerHTML = '<div class="sheet-empty">加载中…</div>';
+    dom.bibleBody.scrollTop = 0;
     fetchBibleChapter(state.bibleBookSn, state.bibleChapter).then(function (data) {
       renderBibleVerses(data);
     });
   }
 
   function renderBibleBooks() {
-    var books = state.bibleBooks || [];
+    var books = state.bibleBooks;
+    if (books === null || books === undefined) {
+      dom.bibleBody.innerHTML = '<button type="button" class="sheet-retry">圣经加载失败，轻触重试</button>';
+      return;
+    }
     if (!books.length) {
-      dom.bibleBody.innerHTML = '<div class="sheet-empty">圣经加载失败，请稍后重试</div>';
+      dom.bibleBody.innerHTML = '<div class="sheet-empty">暂无书卷数据</div>';
       return;
     }
     var sections = [];
@@ -310,6 +339,10 @@
 
   function renderBibleVerses(data) {
     var verses = (data && data.list) || [];
+    if (data && data.failed) {
+      dom.bibleBody.innerHTML = '<button type="button" class="sheet-retry">本章加载失败，轻触重试</button>';
+      return;
+    }
     if (!verses.length) {
       dom.bibleBody.innerHTML = '<div class="sheet-empty">本章暂无经文</div>';
       return;
@@ -322,6 +355,7 @@
   function openBibleSheet() {
     dom.bibleOverlay.classList.remove('hidden');
     dom.bibleBody.innerHTML = '<div class="sheet-empty">加载中…</div>';
+    dom.bibleBody.scrollTop = 0;
     state.bibleView = 'books';
     state.bibleBookSn = null;
     state.bibleChapter = null;
@@ -1090,8 +1124,30 @@
     node.addEventListener('click', closeSheets);
   });
 
-  /* 面板内容区统一事件委托：书卷 / 章节点击进入下一级。 */
+  /* 面板内容区统一事件委托：书卷 / 章节点击进入下一级，
+     sheet-retry 按当前视图重试失败加载。 */
   dom.bibleBody.addEventListener('click', function (event) {
+    var retry = event.target.closest('.sheet-retry');
+    if (retry) {
+      if (state.bibleView === 'reading' && state.bibleBookSn && state.bibleChapter) {
+        /* 阅读视图原地重取当前章。 */
+        dom.bibleBody.innerHTML = '<div class="sheet-empty">加载中…</div>';
+        dom.bibleBody.scrollTop = 0;
+        fetchBibleChapter(state.bibleBookSn, state.bibleChapter).then(function (data) {
+          renderBibleVerses(data);
+        });
+        return;
+      }
+      state.bibleView = 'books';
+      state.bibleBookSn = null;
+      state.bibleChapter = null;
+      state.bibleBooks = null;
+      dom.bibleBody.innerHTML = '<div class="sheet-empty">加载中…</div>';
+      fetchBibleBooks().then(function () {
+        renderBible();
+      });
+      return;
+    }
     var bookCard = event.target.closest('.bible-book');
     if (bookCard) {
       state.bibleBookSn = Number(bookCard.getAttribute('data-sn'));
@@ -1103,6 +1159,14 @@
     if (chapterCard) {
       gotoChapter(state.bibleBookSn, Number(chapterCard.getAttribute('data-chapter')));
     }
+  });
+
+  /* 公告面板失败重试：与打开面板走同一加载路径。 */
+  dom.announcementList.addEventListener('click', function (event) {
+    if (!event.target.closest('.sheet-retry')) {
+      return;
+    }
+    openAnnouncementSheet();
   });
 
   dom.bibleBack.addEventListener('click', function () {
